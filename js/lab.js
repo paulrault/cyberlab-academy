@@ -5,12 +5,9 @@ window.CyberLab = (() => {
   function parseIPv4(value) {
     const parts = String(value).trim().split(".");
     if (parts.length !== 4) return null;
-
-    const octets = parts.map(part => {
-      if (!/^\d{1,3}$/.test(part)) return NaN;
-      return Number(part);
-    });
-
+    const octets = parts.map(part =>
+      /^\d{1,3}$/.test(part) ? Number(part) : NaN
+    );
     if (octets.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return null;
     return octets;
   }
@@ -43,19 +40,9 @@ window.CyberLab = (() => {
     const network = (ipInt & mask) >>> 0;
     const broadcast = (network | (~mask >>> 0)) >>> 0;
     const total = Math.pow(2, 32 - prefix);
-    let first = network;
-    let last = broadcast;
-    let usable = total;
-
-    if (prefix <= 30) {
-      first = (network + 1) >>> 0;
-      last = (broadcast - 1) >>> 0;
-      usable = Math.max(0, total - 2);
-    } else if (prefix === 31) {
-      usable = 2;
-    } else {
-      usable = 1;
-    }
+    const first = prefix <= 30 ? network + 1 : network;
+    const last = prefix <= 30 ? broadcast - 1 : broadcast;
+    const usable = prefix <= 30 ? Math.max(0, total - 2) : total;
 
     return {
       ip: ip.join("."),
@@ -63,8 +50,8 @@ window.CyberLab = (() => {
       mask: toIPv4(mask),
       network: toIPv4(network),
       broadcast: toIPv4(broadcast),
-      first: toIPv4(first),
-      last: toIPv4(last),
+      first: toIPv4(first >>> 0),
+      last: toIPv4(last >>> 0),
       total,
       usable
     };
@@ -74,14 +61,14 @@ window.CyberLab = (() => {
     const cmd = String(command).trim().toLowerCase();
 
     const responses = {
-      "help": [
-        "Console pédagogique CyberLab",
-        "Commandes disponibles : help, ipconfig, ip addr, ip route, ping 192.168.10.1, clear",
-        "Aucune commande n'est exécutée sur le système réel."
+      help: [
+        "CyberLab Academy — console pédagogique",
+        "Commandes : help, ipconfig, ip addr, ip route, ping 192.168.10.1, clear",
+        "Aucune commande système réelle n'est exécutée."
       ],
-      "ipconfig": [
+      ipconfig: [
         "Configuration réseau simulée",
-        "Carte Ethernet pédagogique",
+        "Interface Ethernet pédagogique",
         "IPv4 : 192.168.10.25",
         "Masque : 255.255.255.0",
         "Passerelle : 192.168.10.1",
@@ -106,17 +93,14 @@ window.CyberLab = (() => {
       const target = cmd.replace(/^ping\s+/, "").trim();
       if (!parseIPv4(target)) return ["Erreur : indique une adresse IPv4 valide."];
       return [
-        `Simulation ping vers ${target}`,
-        "Réponse simulée : délai=1 ms TTL=64",
-        "Bilan pédagogique : 4 envoyés, 4 reçus, 0 perdus",
-        "Ces résultats sont fictifs ; aucun paquet réseau n'a été envoyé."
+        `Simulation de ping vers ${target}`,
+        "Réponse fictive : délai=1 ms TTL=64",
+        "Bilan fictif : 4 envoyés, 4 reçus, 0 perdus",
+        "Aucun paquet réseau réel n'a été envoyé."
       ];
     }
 
-    return [
-      `Commande inconnue : ${command}`,
-      "Saisis help pour afficher les commandes disponibles."
-    ];
+    return [`Commande inconnue : ${command}`, "Saisis help pour voir les commandes disponibles."];
   }
 
   return { parseIPv4, calculate, simulatedCommand };
