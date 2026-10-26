@@ -1,119 +1,96 @@
 
-(() => {
-  "use strict";
+"use strict";
 
-  const devices = [
-    { name: "SRV-AD01", ip: "192.168.10.10", type: "Windows Server", status: "online" },
-    { name: "PC-CLIENT01", ip: "192.168.10.20", type: "Windows 11", status: "online" },
-    { name: "SRV-LINUX01", ip: "192.168.10.30", type: "Debian Linux", status: "warning" },
-    { name: "SRV-WEB01", ip: "192.168.10.40", type: "Serveur web", status: "online" }
+window.CyberSupervision = (() => {
+  const servers = [
+    { id: "srv-ad", name: "SRV-AD01", role: "Active Directory / DNS", status: "online", cpu: 18, ram: 42, uptime: "12 j 04 h" },
+    { id: "srv-web", name: "SRV-WEB01", role: "Serveur web", status: "online", cpu: 32, ram: 61, uptime: "8 j 16 h" },
+    { id: "srv-file", name: "SRV-FICHIERS", role: "Partages réseau", status: "warning", cpu: 84, ram: 78, uptime: "5 j 02 h" },
+    { id: "srv-backup", name: "SRV-BACKUP", role: "Sauvegardes", status: "offline", cpu: 0, ram: 0, uptime: "Indisponible" },
+    { id: "srv-docker", name: "SRV-DOCKER", role: "Conteneurs", status: "online", cpu: 24, ram: 55, uptime: "3 j 11 h" }
   ];
 
-  const logs = [
-    { time: "09:14:02", level: "info", source: "SRV-AD01", message: "Service d'annuaire disponible." },
-    { time: "09:17:43", level: "warning", source: "SRV-LINUX01", message: "Espace disque simulé : seuil d'alerte atteint." },
-    { time: "09:20:11", level: "critical", source: "SRV-LINUX01", message: "Exemple pédagogique : échec de connexion à un service." },
-    { time: "09:22:30", level: "info", source: "PC-CLIENT01", message: "Poste client présent dans la simulation." }
+  const events = [
+    { time: "09:12", level: "INFO", message: "Contrôle de disponibilité terminé." },
+    { time: "09:14", level: "WARN", message: "Utilisation CPU élevée sur SRV-FICHIERS." },
+    { time: "09:16", level: "ERROR", message: "Contrôle fictif de SRV-BACKUP en échec." },
+    { time: "09:18", level: "INFO", message: "Vérification des métriques terminée." }
   ];
 
-  let visibleLogs = [...logs];
+  function render() {
+    const rows = servers.map(server => {
+      const statusLabel = {
+        online: "En ligne",
+        warning: "Attention",
+        offline: "Indisponible"
+      }[server.status];
 
-  function renderDevices() {
-    const container = document.getElementById("devicesList");
-    if (!container) return;
-    container.replaceChildren();
+      return `
+        <tr>
+          <td><strong>${server.name}</strong><br><span class="muted">${server.role}</span></td>
+          <td><span class="status ${server.status}">${statusLabel}</span></td>
+          <td>${server.cpu} %</td>
+          <td>${server.ram} %</td>
+          <td>${server.uptime}</td>
+          <td><button class="button small" data-action="inspect-server" data-id="${server.id}">Examiner</button></td>
+        </tr>`;
+    }).join("");
 
-    devices.forEach(device => {
-      const row = document.createElement("div");
-      row.className = "device-row";
+    const logs = events.map(event => `
+      <li class="list-item">
+        <strong>${event.time} · ${event.level}</strong>
+        <span>${event.message}</span>
+      </li>`).join("");
 
-      const info = document.createElement("div");
-      info.className = "device-info";
-
-      const name = document.createElement("strong");
-      name.textContent = device.name;
-
-      const description = document.createElement("small");
-      description.textContent = device.type + " • " + device.ip;
-      info.append(name, description);
-
-      const status = document.createElement("span");
-      status.className = "device-status " + device.status;
-      status.textContent = {
-        online: "● En ligne",
-        warning: "▲ À surveiller",
-        offline: "● Hors ligne"
-      }[device.status];
-
-      row.append(info, status);
-      container.appendChild(row);
-    });
-
-    const online = devices.filter(d => d.status === "online").length;
-    document.getElementById("onlineCount").textContent = online;
-    document.getElementById("alertCount").textContent =
-      devices.filter(d => d.status !== "online").length;
+    return `
+      <div class="notice warn">
+        <strong>Simulation pédagogique</strong>
+        <p>Les états, les métriques et les journaux ci-dessous sont fictifs. Ils ne proviennent pas de tes machines.</p>
+      </div>
+      <section class="section">
+        <div class="grid grid-3">
+          <div class="card"><span class="stat-label">Serveurs suivis</span><span class="stat-value">${servers.length}</span></div>
+          <div class="card"><span class="stat-label">En ligne</span><span class="stat-value">${servers.filter(s => s.status === "online").length}</span></div>
+          <div class="card"><span class="stat-label">Alertes à examiner</span><span class="stat-value">${servers.filter(s => s.status !== "online").length}</span></div>
+        </div>
+      </section>
+      <section class="section card">
+        <div class="section-heading"><h2>Inventaire des serveurs</h2><span class="tag">Données simulées</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Serveur / rôle</th><th>État</th><th>CPU</th><th>RAM</th><th>Disponibilité</th><th>Action</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table></div>
+        <div id="serverDetail"></div>
+      </section>
+      <section class="section card">
+        <div class="section-heading"><h2>Journal d'événements</h2><span class="tag">Exemple fictif</span></div>
+        <ul class="list">${logs}</ul>
+        <div class="field">
+          <label for="incidentNote">Ton diagnostic ou les actions à prévoir</label>
+          <textarea id="incidentNote" placeholder="Ex. : vérifier les journaux, confirmer l'incident, prévenir le responsable..."></textarea>
+        </div>
+        <button class="button primary" data-action="save-incident">Enregistrer dans le journal de révision</button>
+      </section>`;
   }
 
-  function renderLogs() {
-    const container = document.getElementById("logsList");
-    if (!container) return;
-    container.replaceChildren();
+  function inspect(id) {
+    const server = servers.find(item => item.id === id);
+    const target = document.getElementById("serverDetail");
+    if (!server || !target) return;
 
-    if (!visibleLogs.length) {
-      const empty = document.createElement("p");
-      empty.className = "card-meta";
-      empty.textContent = "Aucun événement affiché.";
-      container.appendChild(empty);
-      return;
-    }
+    const advice = server.status === "online"
+      ? "État nominal dans cette simulation. Continuer les contrôles périodiques."
+      : server.status === "warning"
+        ? "Examiner la tendance des métriques, les journaux et les tâches en cours avant de conclure."
+        : "Vérifier la portée de l'alerte, l'alimentation et la connectivité dans un environnement réel, selon les procédures autorisées.";
 
-    visibleLogs.forEach(log => {
-      const row = document.createElement("div");
-      row.className = "log-row";
-
-      const level = document.createElement("span");
-      level.className = "log-severity " + log.level;
-      level.textContent = {
-        info: "INFO",
-        warning: "ALERTE",
-        critical: "CRITIQUE"
-      }[log.level] || "INFO";
-
-      const content = document.createElement("div");
-      const message = document.createElement("p");
-      message.textContent = log.message;
-
-      const detail = document.createElement("small");
-      detail.textContent = log.time + " • " + log.source;
-      content.append(message, detail);
-
-      row.append(level, content);
-      container.appendChild(row);
-    });
+    target.innerHTML = `
+      <div class="result">
+        <h3>Analyse de ${server.name}</h3>
+        <p>${advice}</p>
+        <p class="muted small-text">Ces données sont simulées et ne permettent pas de conclure sur un serveur réel.</p>
+      </div>`;
   }
 
-  function refresh() {
-    renderDevices();
-    renderLogs();
-    window.CyberApp?.notify("Données de démonstration actualisées.");
-  }
-
-  function init() {
-    renderDevices();
-    renderLogs();
-
-    document.getElementById("refreshMonitoring")
-      ?.addEventListener("click", refresh);
-
-    document.getElementById("clearLogs")
-      ?.addEventListener("click", () => {
-        visibleLogs = [];
-        renderLogs();
-      });
-  }
-
-  window.CyberSupervision = { renderDevices, renderLogs, refresh };
-
-  document.addEventListener("DOMContentLoaded", init);
+  return { render, inspect };
 })();
