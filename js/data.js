@@ -4,347 +4,259 @@
 window.CyberData = {
   courses: [
     {
-      id: "windows",
-      title: "Windows Server",
-      icon: "🖥️",
-      category: "Systèmes",
-      level: "Intermédiaire",
-      description: "Découvrir les rôles serveur et administrer un domaine.",
+      id: "network", icon: "🌐", title: "Réseaux informatiques",
+      category: "Réseau", level: "Débutant → Intermédiaire",
+      description: "IPv4, sous-réseaux, VLAN, routage, DNS et DHCP.",
       lessons: [
         {
-          id: "win-ad",
-          title: "Active Directory",
-          duration: "15 min",
+          id: "net-ip", title: "Comprendre IPv4", duration: "15 min",
           content: [
-            "Active Directory Domain Services (AD DS) centralise l'identité des utilisateurs, des ordinateurs et des groupes dans un domaine Windows.",
-            "Une unité d'organisation (OU) permet de classer les objets et de déléguer certaines tâches d'administration.",
-            "Les stratégies de groupe (GPO) permettent d'appliquer des paramètres aux utilisateurs et aux ordinateurs.",
-            "Le DNS est essentiel pour localiser les services Active Directory."
+            "Une adresse IPv4 identifie une interface réseau. Elle comporte 32 bits, généralement présentés sous la forme de quatre nombres décimaux séparés par des points.",
+            "Le masque de sous-réseau indique quelle partie de l'adresse correspond au réseau et quelle partie correspond à l'hôte. Le préfixe /24 correspond au masque 255.255.255.0."
           ],
-          task: "Propose une organisation simple avec les OU Clients et Techniciens, puis explique pourquoi les droits d'administration doivent être limités."
+          task: "Avec le calculateur du laboratoire, détermine le réseau correspondant à 192.168.10.25/24."
         },
         {
-          id: "win-dns",
-          title: "DNS et résolution de noms",
-          duration: "12 min",
+          id: "net-vlan", title: "VLAN et segmentation", duration: "20 min",
           content: [
-            "Le DNS traduit les noms de domaine en informations utilisables par les systèmes, notamment des adresses IP.",
-            "Un enregistrement A associe un nom à une adresse IPv4 ; un enregistrement AAAA utilise IPv6.",
-            "Un enregistrement PTR sert à la résolution inverse. Les enregistrements SRV permettent de localiser des services.",
-            "En cas de panne, vérifier la configuration DNS du client et tester la résolution du nom."
+            "Un VLAN permet de séparer logiquement des équipements au niveau 2. Deux VLAN différents constituent généralement des domaines de diffusion distincts.",
+            "La communication entre VLAN nécessite habituellement un équipement de couche 3 et des règles de routage. Les trunks transportent plusieurs VLAN entre des équipements compatibles."
           ],
-          task: "Explique pourquoi un poste joint à un domaine doit utiliser le DNS de l'infrastructure Active Directory."
+          task: "Dessine un réseau avec un VLAN Clients, un VLAN Techniciens et un VLAN Serveurs. Identifie les flux qui doivent être autorisés."
         },
         {
-          id: "win-dhcp",
-          title: "DHCP et attribution d'adresses",
-          duration: "12 min",
+          id: "net-dns", title: "DNS et DHCP", duration: "20 min",
           content: [
-            "Le DHCP attribue automatiquement des paramètres réseau aux clients.",
-            "Le processus DORA correspond à Discover, Offer, Request et Acknowledge.",
-            "Une étendue définit la plage d'adresses distribuées. Les exclusions et réservations répondent à des besoins différents.",
-            "La passerelle par défaut permet de joindre les réseaux extérieurs au sous-réseau local."
+            "Le DNS permet notamment de résoudre des noms en adresses IP. Le DHCP distribue automatiquement des paramètres réseau comme l'adresse IP, le masque, la passerelle et les serveurs DNS.",
+            "Pour diagnostiquer un problème, distingue l'absence d'adresse, une mauvaise passerelle et un échec de résolution DNS : ces symptômes n'indiquent pas la même cause."
           ],
-          task: "Décris les vérifications à effectuer si un poste ne reçoit pas d'adresse IPv4."
+          task: "Écris une checklist de diagnostic pour un poste qui accède à une adresse IP mais ne résout pas un nom de domaine."
         }
       ]
     },
     {
-      id: "network",
-      title: "Réseaux et IPv4",
-      icon: "🌐",
-      category: "Réseaux",
-      level: "Fondamental",
-      description: "Adresses, masques, passerelles, VLAN et diagnostic.",
+      id: "windows", icon: "🖥️", title: "Windows Server",
+      category: "Systèmes", level: "Débutant → Intermédiaire",
+      description: "Active Directory, DNS, DHCP, utilisateurs et partages.",
       lessons: [
         {
-          id: "net-ipv4",
-          title: "Comprendre IPv4",
-          duration: "12 min",
+          id: "win-ad", title: "Active Directory et OU", duration: "25 min",
           content: [
-            "Une adresse IPv4 contient 32 bits, généralement représentés par quatre nombres décimaux de 0 à 255.",
-            "Le masque sépare la partie réseau et la partie hôte. Le préfixe /24 correspond au masque 255.255.255.0.",
-            "La passerelle est le routeur utilisé pour atteindre d'autres réseaux.",
-            "Deux appareils d'un même sous-réseau peuvent communiquer directement si les règles réseau le permettent."
+            "Active Directory Domain Services centralise l'identité et l'administration des objets d'un domaine. Les unités d'organisation (OU) servent notamment à organiser les objets et à déléguer l'administration.",
+            "Les stratégies de groupe (GPO) permettent d'appliquer des paramètres à des utilisateurs et ordinateurs selon leur emplacement et les règles d'héritage."
           ],
-          task: "Pour 192.168.10.25/24, indique l'adresse réseau et la plage habituelle des hôtes."
+          task: "Propose une arborescence d'OU pour les utilisateurs Clients et Techniciens d'une entreprise fictive."
         },
         {
-          id: "net-vlan",
-          title: "VLAN et segmentation",
-          duration: "15 min",
+          id: "win-dhcp", title: "DHCP sous Windows Server", duration: "20 min",
           content: [
-            "Un VLAN segmente logiquement un réseau de niveau 2.",
-            "Les ports access appartiennent généralement à un VLAN ; les trunks transportent plusieurs VLAN identifiés.",
-            "La communication entre VLAN nécessite du routage de niveau 3 et les règles de filtrage appropriées.",
-            "La segmentation facilite l'organisation et peut limiter l'étendue de certains incidents."
+            "Une étendue DHCP définit une plage d'adresses pouvant être attribuées aux clients. Il faut planifier les exclusions, les réservations et les options de configuration.",
+            "Une configuration incorrecte de la passerelle ou du DNS peut laisser un poste avec une adresse valide, mais empêcher certains accès."
           ],
-          task: "Propose deux VLAN séparés pour les postes clients et les serveurs, puis indique ce qu'il faut pour permettre leur communication."
+          task: "Conçois une étendue pour le réseau 192.168.10.0/24 et précise les adresses que tu réserverais aux serveurs."
         },
         {
-          id: "net-troubleshoot",
-          title: "Diagnostic réseau",
-          duration: "10 min",
+          id: "win-share", title: "Partages et permissions", duration: "20 min",
           content: [
-            "Commence par vérifier le lien, l'adresse IP, le masque, la passerelle et le DNS.",
-            "Ping teste la joignabilité ICMP lorsqu'elle est autorisée ; son échec ne prouve pas toujours qu'un hôte est indisponible.",
-            "Traceroute ou tracert aide à observer le chemin vers une destination.",
-            "Il faut isoler le problème étape par étape et noter les résultats."
+            "Les droits de partage et les permissions NTFS sont deux couches distinctes. L'accès effectif dépend de leur combinaison et du contexte d'accès.",
+            "Applique le principe du moindre privilège : accorde uniquement les droits nécessaires et vérifie l'accès avec un compte de test."
           ],
-          task: "Décris l'ordre de tes tests lorsqu'un poste accède aux adresses IP mais pas aux noms de domaine."
+          task: "Définis des permissions adaptées pour un dossier partagé par les techniciens et un dossier de documents clients."
         }
       ]
     },
     {
-      id: "debian",
-      title: "Linux et Debian",
-      icon: "🐧",
-      category: "Systèmes",
-      level: "Fondamental",
-      description: "Commandes, permissions, services et journaux.",
+      id: "linux", icon: "🐧", title: "Linux & Debian",
+      category: "Linux", level: "Débutant → Intermédiaire",
+      description: "Terminal, utilisateurs, services, journaux et permissions.",
       lessons: [
         {
-          id: "deb-cli",
-          title: "Commandes essentielles",
-          duration: "10 min",
+          id: "lin-files", title: "Fichiers et permissions", duration: "15 min",
           content: [
-            "pwd affiche le répertoire courant, ls liste son contenu et cd change de répertoire.",
-            "ip address affiche les interfaces et leurs adresses. ip route affiche les routes connues.",
-            "systemctl status nom.service permet d'examiner l'état d'un service systemd.",
-            "journalctl -u nom.service permet de consulter les journaux associés à un service."
+            "Linux organise les ressources dans une arborescence unique. Les permissions classiques distinguent le propriétaire, le groupe et les autres utilisateurs.",
+            "Les permissions de lecture, écriture et exécution sont souvent représentées par r, w et x, ou par une notation numérique comme 644 ou 755."
           ],
-          task: "Prépare une séquence de commandes pour vérifier l'adresse IP et l'état d'un service."
+          task: "Explique la différence entre les permissions 644 et 755 et donne un exemple d'utilisation pour chacune."
         },
         {
-          id: "deb-perms",
-          title: "Utilisateurs et permissions",
-          duration: "14 min",
+          id: "lin-service", title: "Services et journaux", duration: "20 min",
           content: [
-            "Linux distingue notamment le propriétaire, le groupe et les autres utilisateurs.",
-            "Les permissions usuelles sont la lecture (r), l'écriture (w) et l'exécution (x).",
-            "sudo permet d'exécuter certaines commandes avec des privilèges élevés selon la politique configurée.",
-            "Applique le principe du moindre privilège et évite les droits trop larges."
+            "Sur les distributions utilisant systemd, systemctl permet d'inspecter et de gérer les services. journalctl aide à consulter les journaux système.",
+            "Avant de redémarrer un service, relève son état, consulte les erreurs et vérifie si une modification récente explique le problème."
           ],
-          task: "Explique la différence entre les permissions 644 et 755."
-        }
-      ]
-    },
-    {
-      id: "security",
-      title: "Cybersécurité défensive",
-      icon: "🛡️",
-      category: "Sécurité",
-      level: "Intermédiaire",
-      description: "Durcissement, comptes, journaux et incidents.",
-      lessons: [
-        {
-          id: "sec-hardening",
-          title: "Durcissement des systèmes",
-          duration: "15 min",
-          content: [
-            "Le durcissement consiste à réduire la surface d'attaque d'un système.",
-            "Applique les mises à jour, désactive les services inutiles et limite les droits.",
-            "Les sauvegardes doivent être protégées et faire l'objet de tests de restauration.",
-            "La journalisation et la synchronisation de l'heure facilitent l'analyse des incidents."
-          ],
-          task: "Établis cinq mesures de protection pour un nouveau serveur Debian."
+          task: "Rédige une procédure de diagnostic d'un service qui ne démarre pas sur une machine de laboratoire."
         },
         {
-          id: "sec-incident",
-          title: "Gestion d'incident",
-          duration: "15 min",
+          id: "lin-network", title: "Diagnostic réseau Linux", duration: "20 min",
           content: [
-            "Détecter, qualifier, documenter et signaler un incident selon les procédures prévues.",
-            "Préserver les journaux et les éléments utiles à l'analyse.",
-            "Éviter les changements précipités qui pourraient détruire des preuves ou aggraver la situation.",
-            "Après résolution, documenter la cause, les actions et les améliorations nécessaires."
+            "Les commandes ip address et ip route affichent respectivement les interfaces et les routes. Les outils de résolution DNS permettent ensuite de séparer les problèmes IP des problèmes de noms.",
+            "Adapte toujours les commandes au système et à l'environnement. Une commande d'inspection n'a pas les mêmes effets qu'une commande qui modifie la configuration."
           ],
-          task: "Un serveur présente des connexions inhabituelles. Quelles sont les premières actions prudentes ?"
+          task: "Prépare une checklist pour vérifier l'adresse, la route par défaut et la résolution DNS sur Debian."
         }
       ]
     },
     {
-      id: "docker",
-      title: "Docker et conteneurs",
-      icon: "🐳",
-      category: "Infrastructure",
-      level: "Intermédiaire",
-      description: "Images, conteneurs, volumes et réseaux.",
+      id: "security", icon: "🛡️", title: "Cybersécurité défensive",
+      category: "Sécurité", level: "Fondamentaux",
+      description: "Durcissement, mises à jour, journaux et gestion des incidents.",
       lessons: [
         {
-          id: "dock-basics",
-          title: "Images et conteneurs",
-          duration: "12 min",
+          id: "sec-hardening", title: "Durcissement des systèmes", duration: "20 min",
           content: [
-            "Une image est un modèle servant à créer un conteneur.",
-            "Un conteneur est une instance isolée d'une image avec son processus et sa configuration.",
-            "Les volumes permettent de conserver des données au-delà du cycle de vie du conteneur.",
-            "Les ports publiés rendent certains services accessibles depuis l'hôte ou le réseau selon la configuration."
+            "Le durcissement réduit la surface d'attaque : mises à jour, désactivation des services inutiles, comptes maîtrisés, authentification robuste et permissions adaptées.",
+            "Documente les changements et conserve un moyen de retour arrière. Teste les modifications dans un environnement autorisé avant de les généraliser."
           ],
-          task: "Explique pourquoi une base de données en conteneur a souvent besoin d'un volume persistant."
+          task: "Établis une checklist de durcissement pour un nouveau serveur de laboratoire."
         },
         {
-          id: "dock-compose",
-          title: "Docker Compose",
-          duration: "15 min",
+          id: "sec-logs", title: "Lire des journaux", duration: "20 min",
           content: [
-            "Compose décrit une application multi-conteneurs dans un fichier YAML.",
-            "Chaque service peut déclarer son image, ses variables, ses ports, ses volumes et ses réseaux.",
-            "Les secrets ne doivent pas être écrits en clair dans un dépôt public.",
-            "Les journaux et les contrôles de santé aident à diagnostiquer les problèmes."
+            "Un journal apporte des éléments de contexte : heure, source, type d'événement et résultat. Un événement isolé ne suffit pas toujours à prouver qu'un incident a eu lieu.",
+            "Corrèle les événements, vérifie les horodatages et distingue les faits observés des hypothèses. Respecte les procédures de conservation des preuves."
           ],
-          task: "Liste les éléments nécessaires pour déployer un serveur web avec des données persistantes."
+          task: "À partir d'un incident fictif, prépare une chronologie qui sépare faits, hypothèses et actions à mener."
+        },
+        {
+          id: "sec-backup", title: "Sauvegarde et reprise", duration: "20 min",
+          content: [
+            "Une sauvegarde n'est utile que si elle peut être restaurée. Définis les données critiques, la fréquence, la rétention et les personnes autorisées à accéder aux copies.",
+            "Le RPO représente la perte de données maximale visée. Le RTO représente le délai de rétablissement visé. Ils se définissent en fonction des besoins du service."
+          ],
+          task: "Propose un plan de sauvegarde et un test de restauration pour un serveur de fichiers fictif."
         }
       ]
     },
     {
-      id: "virtual",
-      title: "Virtualisation",
-      icon: "🧩",
-      category: "Infrastructure",
-      level: "Intermédiaire",
-      description: "Machines virtuelles, ressources, snapshots et réseau virtuel.",
+      id: "docker", icon: "📦", title: "Docker & conteneurs",
+      category: "DevOps", level: "Intermédiaire",
+      description: "Images, conteneurs, volumes, ports et réseaux.",
       lessons: [
         {
-          id: "virt-vm",
-          title: "Machines virtuelles",
-          duration: "12 min",
+          id: "dock-basics", title: "Images et conteneurs", duration: "20 min",
           content: [
-            "Un hyperviseur permet d'exécuter plusieurs machines virtuelles sur un hôte physique.",
-            "Chaque VM dispose de ressources virtuelles comme le processeur, la mémoire, le disque et les interfaces réseau.",
-            "Les réseaux NAT, pontés et internes répondent à des besoins différents.",
-            "Les snapshots facilitent certains retours arrière mais ne remplacent pas une sauvegarde indépendante."
+            "Une image est un modèle servant à créer des conteneurs. Un conteneur est une instance exécutée à partir d'une image avec sa propre configuration.",
+            "Un conteneur n'est pas une machine virtuelle complète. Il partage le noyau de l'hôte et doit être géré avec des règles de sécurité adaptées."
           ],
-          task: "Compare un réseau NAT et un réseau interne pour un laboratoire de formation."
+          task: "Explique la différence entre une image, un conteneur et un volume."
+        },
+        {
+          id: "dock-network", title: "Ports, volumes et réseaux", duration: "25 min",
+          content: [
+            "La publication d'un port rend un service accessible via l'hôte. Un volume permet de conserver des données au-delà du cycle de vie d'un conteneur.",
+            "Les réseaux Docker permettent aux services de communiquer. Évite d'exposer publiquement un service d'administration sans contrôle d'accès approprié."
+          ],
+          task: "Dessine une architecture composée d'un proxy inverse et de deux services internes."
         }
       ]
     },
     {
-      id: "backup",
-      title: "Sauvegardes et restauration",
-      icon: "💾",
-      category: "Infrastructure",
-      level: "Intermédiaire",
-      description: "Stratégies de sauvegarde, rétention et tests.",
+      id: "virtual", icon: "☁️", title: "Virtualisation",
+      category: "Infrastructure", level: "Intermédiaire",
+      description: "Machines virtuelles, ressources, snapshots et sauvegardes.",
       lessons: [
         {
-          id: "backup-plan",
-          title: "Plan de sauvegarde",
-          duration: "14 min",
+          id: "virt-basics", title: "Principes de virtualisation", duration: "20 min",
           content: [
-            "Identifie les données critiques et les objectifs de reprise.",
-            "La règle 3-2-1 recommande trois copies, sur deux types de supports, dont une copie hors site.",
-            "Une sauvegarde n'est utile que si elle peut être restaurée dans les délais attendus.",
-            "Protège les sauvegardes contre l'accès non autorisé et les suppressions malveillantes."
+            "Un hyperviseur permet d'exécuter plusieurs machines virtuelles sur un hôte physique. Chaque VM dispose de ressources virtuelles et d'un système d'exploitation invité.",
+            "Le dimensionnement doit tenir compte de la mémoire, du processeur, du stockage et des besoins réseau. Une surallocation excessive peut dégrader les performances."
           ],
-          task: "Élabore un plan simple pour les fichiers d'une petite entreprise."
+          task: "Propose un plan de ressources pour trois VM de laboratoire et justifie tes choix."
+        },
+        {
+          id: "virt-backup", title: "Snapshots et sauvegardes", duration: "20 min",
+          content: [
+            "Un snapshot est utile pour revenir à un état antérieur dans certaines situations, mais il ne remplace pas une sauvegarde indépendante.",
+            "Une stratégie fiable inclut des copies adaptées aux risques, une surveillance des tâches et des essais réguliers de restauration."
+          ],
+          task: "Décris comment protéger une VM importante et comment tester sa restauration."
         }
       ]
     },
     {
-      id: "monitoring",
-      title: "Supervision et observabilité",
-      icon: "📈",
-      category: "Infrastructure",
-      level: "Intermédiaire",
-      description: "Disponibilité, métriques, journaux et alertes.",
+      id: "monitoring", icon: "📊", title: "Supervision & incidents",
+      category: "Exploitation", level: "Intermédiaire",
+      description: "Disponibilité, seuils, alertes, métriques et comptes rendus.",
       lessons: [
         {
-          id: "mon-basics",
-          title: "Indicateurs et alertes",
-          duration: "12 min",
+          id: "mon-metrics", title: "Métriques et alertes", duration: "20 min",
           content: [
-            "La supervision suit l'état des services et les indicateurs utiles à leur fonctionnement.",
-            "Une métrique représente une mesure dans le temps ; un journal contient des événements détaillés.",
-            "Une alerte doit être actionnable, contextualisée et réglée pour limiter les faux positifs.",
-            "Les seuils doivent être adaptés au service et à son comportement normal."
+            "Les métriques CPU, mémoire, espace disque et disponibilité aident à détecter les dégradations. Un seuil doit être interprété dans son contexte et dans la durée.",
+            "Une alerte doit préciser la ressource concernée, la gravité, l'heure, l'impact probable et les premières vérifications."
           ],
-          task: "Choisis trois indicateurs pertinents pour surveiller un serveur web."
+          task: "Écris une fiche d'incident fictif avec impact, priorité, hypothèses et étapes de diagnostic."
+        },
+        {
+          id: "mon-report", title: "Compte rendu d'incident", duration: "15 min",
+          content: [
+            "Un bon compte rendu distingue les faits, les actions effectuées, les résultats observés et les actions restantes.",
+            "Reste factuel, indique les horaires et les impacts connus, et ne présente pas une hypothèse comme une cause confirmée."
+          ],
+          task: "Rédige un compte rendu concis d'une indisponibilité fictive d'un serveur de fichiers."
         }
       ]
     }
   ],
 
   missions: [
-    { id: "m1", title: "Diagnostiquer une panne DNS", category: "Réseau", difficulty: "Débutant", xp: 50,
-      description: "Un poste joint un serveur par adresse IP, mais la résolution de son nom échoue.",
-      hint: "Vérifie d'abord le serveur DNS configuré et teste une résolution de nom.",
-      correction: "Contrôler la configuration IP et DNS du client, vérifier l'accès au serveur DNS, tester la résolution et examiner la zone et les enregistrements nécessaires." },
-    { id: "m2", title: "Organiser Active Directory", category: "Windows Server", difficulty: "Intermédiaire", xp: 75,
-      description: "Sépare les comptes clients des comptes techniciens et limite les droits.",
-      hint: "Pense aux OU, groupes de sécurité et délégations de droits.",
-      correction: "Créer des OU cohérentes, placer les comptes au bon endroit, utiliser des groupes de sécurité et attribuer uniquement les droits nécessaires." },
-    { id: "m3", title: "Résoudre un bail DHCP absent", category: "Réseau", difficulty: "Débutant", xp: 50,
-      description: "Un poste ne reçoit pas d'adresse IPv4 automatiquement.",
-      hint: "Examine le lien réseau, le VLAN, l'étendue et les relais éventuels.",
-      correction: "Vérifier la connexion et le VLAN, l'état du service DHCP, la disponibilité de l'étendue, les exclusions, les relais et les règles de filtrage." },
-    { id: "m4", title: "Examiner un service Debian", category: "Linux", difficulty: "Débutant", xp: 50,
-      description: "Un service Linux ne démarre plus après une modification.",
-      hint: "Consulte l'état du service puis ses journaux.",
-      correction: "Utiliser systemctl status et journalctl -u, examiner la configuration modifiée, corriger l'erreur puis valider le démarrage." },
-    { id: "m5", title: "Préparer un conteneur persistant", category: "Docker", difficulty: "Intermédiaire", xp: 75,
-      description: "Une application doit conserver ses fichiers après recréation du conteneur.",
-      hint: "Distingue le système de fichiers du conteneur et le stockage persistant.",
-      correction: "Définir un volume ou un montage approprié, contrôler les permissions et vérifier la persistance après recréation." },
-    { id: "m6", title: "Segmenter le réseau", category: "Réseau", difficulty: "Avancé", xp: 100,
-      description: "Les postes utilisateurs et les serveurs doivent être séparés logiquement.",
-      hint: "Pense aux VLAN, au routage et aux règles de filtrage.",
-      correction: "Créer les VLAN, configurer les ports access et trunks, prévoir le routage inter-VLAN nécessaire et appliquer des règles de filtrage restrictives." },
-    { id: "m7", title: "Établir une stratégie de sauvegarde", category: "Sauvegarde", difficulty: "Intermédiaire", xp: 75,
-      description: "Les fichiers partagés doivent pouvoir être restaurés après incident.",
-      hint: "Définis fréquence, rétention, protection et tests de restauration.",
-      correction: "Définir les données à protéger, la fréquence, la rétention, une copie isolée, le contrôle des accès et des tests de restauration documentés." },
-    { id: "m8", title: "Réagir à une alerte système", category: "Sécurité", difficulty: "Avancé", xp: 100,
-      description: "Un serveur affiche une activité inhabituelle signalée par la supervision.",
-      hint: "Documente les faits et préserve les journaux avant toute action importante.",
-      correction: "Qualifier et signaler l'incident, préserver les journaux, appliquer la procédure de réponse et documenter chaque action sans tirer de conclusion hâtive." },
-    { id: "m9", title: "Planifier une migration virtuelle", category: "Virtualisation", difficulty: "Intermédiaire", xp: 75,
-      description: "Une VM doit être migrée vers un autre hôte.",
-      hint: "Vérifie les ressources, le réseau, le stockage et le plan de retour arrière.",
-      correction: "Inventorier les dépendances, vérifier la compatibilité et les ressources, sauvegarder, planifier une fenêtre de migration, tester puis documenter." },
-    { id: "m10", title: "Créer une supervision utile", category: "Supervision", difficulty: "Intermédiaire", xp: 75,
-      description: "Une équipe souhaite être alertée lorsque son service web devient indisponible.",
-      hint: "Choisis un contrôle de disponibilité et un seuil d'alerte pertinent.",
-      correction: "Définir un contrôle de disponibilité, la fréquence, le seuil, les destinataires, une procédure d'escalade et un test d'alerte." },
-    { id: "m11", title: "Corriger des permissions Linux", category: "Linux", difficulty: "Intermédiaire", xp: 75,
-      description: "Un fichier de configuration est accessible à trop d'utilisateurs.",
-      hint: "Examine propriétaire, groupe et permissions nécessaires.",
-      correction: "Identifier les utilisateurs légitimes, ajuster propriétaire et groupe, réduire les permissions et tester le fonctionnement du service." },
-    { id: "m12", title: "Préparer un plan de reprise", category: "Continuité", difficulty: "Avancé", xp: 125,
-      description: "Une petite entreprise veut réduire l'impact d'une panne majeure.",
-      hint: "Pense aux priorités, dépendances, RPO, RTO et exercices de restauration.",
-      correction: "Inventorier les services critiques, fixer les objectifs de reprise, documenter les dépendances, protéger les sauvegardes et tester régulièrement le plan." }
+    { id:"m1", title:"Poste sans accès réseau", category:"Réseau", difficulty:"Débutant", xp:50, description:"Un poste ne communique plus avec les ressources internes.", hint:"Commence par le lien, l'adresse, le masque et la passerelle.", correction:"Vérifier le lien réseau, relever l'adresse et le masque, contrôler la passerelle, tester la connectivité puis la résolution DNS. Noter chaque résultat avant de modifier la configuration." },
+    { id:"m2", title:"Résolution DNS en échec", category:"Réseau", difficulty:"Débutant", xp:50, description:"Une adresse IP répond, mais le nom d'un service ne se résout pas.", hint:"Compare un test vers l'IP avec une requête DNS.", correction:"Vérifier le serveur DNS configuré, la connectivité vers ce serveur, les enregistrements et les journaux. Distinguer une panne DNS d'une panne du service cible." },
+    { id:"m3", title:"Compte utilisateur bloqué", category:"Windows Server", difficulty:"Intermédiaire", xp:75, description:"Un utilisateur ne parvient plus à ouvrir une session dans le domaine.", hint:"Vérifie l'état du compte, l'heure, le réseau et les événements.", correction:"Confirmer l'identité selon la procédure, vérifier l'état du compte et les événements d'authentification, puis appliquer la procédure autorisée de déblocage ou de réinitialisation." },
+    { id:"m4", title:"Partage réseau inaccessible", category:"Windows Server", difficulty:"Intermédiaire", xp:75, description:"Un collaborateur ne peut plus ouvrir un partage.", hint:"Distingue connectivité, droits de partage et permissions NTFS.", correction:"Vérifier le chemin, la connectivité, l'identité utilisée, les droits de partage et les permissions NTFS. Tester avec un compte autorisé et consigner les changements." },
+    { id:"m5", title:"Service Debian arrêté", category:"Linux", difficulty:"Intermédiaire", xp:75, description:"Un service fictif ne répond plus.", hint:"Observe l'état du service et ses journaux avant d'agir.", correction:"Vérifier l'état du service, les journaux, les ressources et la configuration. Évaluer l'impact avant un redémarrage et vérifier le résultat ensuite." },
+    { id:"m6", title:"Disque presque plein", category:"Supervision", difficulty:"Intermédiaire", xp:75, description:"La capacité disponible d'un serveur passe sous un seuil critique.", hint:"Identifie les systèmes de fichiers et les répertoires concernés.", correction:"Confirmer la métrique, identifier les données qui occupent l'espace, vérifier les journaux et la politique de rétention, puis proposer un nettoyage contrôlé ou une extension." },
+    { id:"m7", title:"Conteneur indisponible", category:"Docker", difficulty:"Intermédiaire", xp:75, description:"Une application conteneurisée n'est plus accessible.", hint:"Vérifie l'état, les journaux, les ports et les dépendances.", correction:"Contrôler l'état du conteneur, les logs, les ports publiés, les volumes, le réseau et les dépendances. Éviter de supprimer un conteneur ou un volume avant d'avoir protégé les données." },
+    { id:"m8", title:"Sauvegarde non confirmée", category:"Sauvegarde", difficulty:"Avancé", xp:100, description:"Une tâche de sauvegarde n'a pas fourni de résultat exploitable.", hint:"Un statut vert ne suffit pas : cherche la preuve de restauration.", correction:"Examiner les journaux de tâche, la destination, la capacité et l'intégrité des copies. Planifier un test de restauration isolé et consigner son résultat." },
+    { id:"m9", title:"Alerte CPU", category:"Supervision", difficulty:"Intermédiaire", xp:75, description:"La charge CPU simulée reste élevée.", hint:"Cherche la durée, la tendance et les processus concernés.", correction:"Confirmer la métrique, examiner la tendance et les processus, corréler avec les tâches planifiées et mesurer l'impact avant toute action." },
+    { id:"m10", title:"Plan de segmentation", category:"Réseau", difficulty:"Avancé", xp:100, description:"Une petite entreprise souhaite séparer clients, techniciens et serveurs.", hint:"Commence par les besoins, puis définis les flux nécessaires.", correction:"Proposer des VLAN et sous-réseaux distincts, un routage contrôlé, des règles de filtrage minimales, une documentation et un plan de tests." },
+    { id:"m11", title:"Préparer une reprise", category:"Infrastructure", difficulty:"Avancé", xp:100, description:"Un serveur essentiel doit pouvoir être restauré après incident.", hint:"Définis les priorités, le RPO, le RTO et les tests.", correction:"Identifier les données et dépendances, fixer des objectifs de reprise réalistes, protéger les sauvegardes, documenter les étapes et tester régulièrement." },
+    { id:"m12", title:"Rapport d'incident", category:"Méthode", difficulty:"Débutant", xp:50, description:"Un responsable demande un compte rendu après un incident.", hint:"Sépare faits, impact, actions, résultats et prochaines étapes.", correction:"Rédiger une chronologie factuelle, préciser les services touchés, les actions réalisées et leurs résultats, les hypothèses restantes et les mesures préventives." }
   ],
 
   questions: [
-    { q: "Quel service attribue automatiquement des paramètres IP ?", options: ["DNS", "DHCP", "SSH", "HTTP"], answer: 1, explanation: "DHCP distribue notamment l'adresse IP, le masque, la passerelle et les DNS." },
-    { q: "Quel enregistrement DNS associe généralement un nom à une IPv4 ?", options: ["AAAA", "PTR", "A", "MX"], answer: 2, explanation: "L'enregistrement A correspond à une adresse IPv4." },
-    { q: "Que signifie le préfixe /24 en IPv4 ?", options: ["24 hôtes", "24 bits réseau", "24 routeurs", "24 VLAN"], answer: 1, explanation: "/24 signifie que 24 bits du masque identifient la partie réseau." },
-    { q: "Quelle commande affiche les routes sous Linux ?", options: ["ip route", "pwd", "whoami", "mkdir"], answer: 0, explanation: "ip route affiche la table de routage." },
-    { q: "À quoi sert un volume Docker ?", options: ["À remplacer le DNS", "À conserver des données", "À compiler le noyau", "À créer un VLAN physique"], answer: 1, explanation: "Un volume permet de conserver les données au-delà du cycle de vie d'un conteneur." },
-    { q: "Quel mécanisme permet de centraliser les comptes Windows d'un domaine ?", options: ["Active Directory", "NAT", "FTP", "Cron"], answer: 0, explanation: "AD DS centralise les identités et les objets du domaine." },
-    { q: "Un ping échoue. Que peut-on conclure ?", options: ["Le serveur est forcément éteint", "Le DNS est forcément cassé", "Il faut poursuivre le diagnostic", "Le disque est plein"], answer: 2, explanation: "ICMP peut être filtré ; un ping échoué ne prouve pas à lui seul que le service est indisponible." },
-    { q: "Quel est l'objectif principal du principe du moindre privilège ?", options: ["Donner tous les droits", "Limiter les droits au nécessaire", "Désactiver les sauvegardes", "Partager tous les comptes"], answer: 1, explanation: "Chaque compte ou service ne doit disposer que des permissions nécessaires." },
-    { q: "Que doit-on faire régulièrement avec les sauvegardes ?", options: ["Les ignorer", "Tester la restauration", "Les rendre publiques", "Supprimer toutes les copies"], answer: 1, explanation: "Les tests confirment que les données peuvent réellement être restaurées." },
-    { q: "À quoi sert un VLAN ?", options: ["À segmenter logiquement un réseau", "À remplacer les disques", "À chiffrer les fichiers", "À attribuer les comptes AD"], answer: 0, explanation: "Un VLAN crée un segment logique de niveau 2." },
-    { q: "Quelle commande examine les journaux d'un service systemd ?", options: ["journalctl -u", "cd -u", "ip -u", "ls -u"], answer: 0, explanation: "journalctl -u nom.service filtre les journaux d'un service." },
-    { q: "Un snapshot remplace-t-il une sauvegarde indépendante ?", options: ["Oui toujours", "Non", "Seulement sous Linux", "Seulement avec DHCP"], answer: 1, explanation: "Un snapshot peut être utile pour revenir en arrière mais ne remplace pas une sauvegarde indépendante." }
+    { q:"Quel service traduit couramment un nom de domaine en adresse IP ?", options:["DHCP","DNS","NTP","SSH"], answer:1, explanation:"DNS assure la résolution de noms." },
+    { q:"Quel service distribue automatiquement une configuration IP ?", options:["DHCP","DNS","HTTP","SMTP"], answer:0, explanation:"DHCP fournit des paramètres réseau aux clients." },
+    { q:"Que signifie un préfixe IPv4 /24 ?", options:["24 octets d'hôtes","24 bits de réseau","24 VLAN","24 passerelles"], answer:1, explanation:"Le préfixe indique le nombre de bits du réseau." },
+    { q:"À quoi sert un VLAN ?", options:["À chiffrer un disque","À segmenter logiquement un réseau de niveau 2","À remplacer DNS","À sauvegarder un serveur"], answer:1, explanation:"Un VLAN sépare logiquement des domaines de diffusion." },
+    { q:"Quel outil Linux consulte souvent les journaux systemd ?", options:["journalctl","mkdir","chmod","echo"], answer:0, explanation:"journalctl permet de consulter les journaux gérés par journald." },
+    { q:"Quelle est la fonction d'une OU Active Directory ?", options:["Remplacer le DNS","Organiser des objets et faciliter la délégation","Créer des VLAN physiques","Chiffrer les sauvegardes"], answer:1, explanation:"Les OU structurent les objets et peuvent servir à déléguer l'administration." },
+    { q:"Un conteneur Docker est principalement créé à partir…", options:["D'une image","D'un VLAN","D'une GPO","D'un enregistrement DNS"], answer:0, explanation:"Une image sert de modèle pour créer un conteneur." },
+    { q:"Un snapshot remplace-t-il une sauvegarde indépendante ?", options:["Toujours","Oui, pour tous les serveurs","Non","Uniquement sur Linux"], answer:2, explanation:"Un snapshot ne remplace pas une stratégie de sauvegarde indépendante." },
+    { q:"Que mesure le RTO ?", options:["La perte maximale de données visée","Le délai de rétablissement visé","La charge CPU","La durée d'un bail DHCP"], answer:1, explanation:"Le RTO représente le délai de rétablissement visé." },
+    { q:"Quel principe guide l'attribution des permissions ?", options:["Tout autoriser","Le moindre privilège","Partager tous les comptes","Désactiver les journaux"], answer:1, explanation:"Le moindre privilège limite les droits à ce qui est nécessaire." },
+    { q:"Quelle étape est importante après une sauvegarde ?", options:["Supprimer la copie","Tester la restauration","Désactiver les alertes","Partager le mot de passe"], answer:1, explanation:"Une restauration testée aide à confirmer que les sauvegardes sont exploitables." },
+    { q:"Que faire en premier devant une alerte de supervision ?", options:["Redémarrer immédiatement","Effacer les journaux","Confirmer l'alerte et évaluer l'impact","Ignorer l'alerte"], answer:2, explanation:"Confirmer les faits et évaluer l'impact avant de choisir une action." },
+    { q:"À quoi sert une passerelle par défaut ?", options:["À joindre des réseaux externes au sous-réseau local","À remplacer l'adresse IP","À créer un utilisateur","À compresser des fichiers"], answer:0, explanation:"Elle permet de transmettre le trafic destiné à d'autres réseaux." },
+    { q:"Quel port est associé au HTTPS par défaut ?", options:["21","22","80","443"], answer:3, explanation:"HTTPS utilise généralement TCP 443." },
+    { q:"Pourquoi documenter une intervention ?", options:["Pour éviter les tests","Pour garder une trace des faits et des actions","Pour masquer les erreurs","Pour supprimer les alertes"], answer:1, explanation:"La documentation facilite le suivi, le diagnostic et la transmission." }
   ],
 
   glossary: [
-    ["AD DS", "Service Windows qui centralise les identités et objets d'un domaine."],
-    ["DHCP", "Protocole d'attribution automatique de paramètres réseau."],
-    ["DNS", "Système de résolution de noms et de localisation de services."],
-    ["GPO", "Stratégie de groupe permettant de configurer utilisateurs et ordinateurs Windows."],
-    ["Hyperviseur", "Logiciel ou couche permettant d'exécuter des machines virtuelles."],
-    ["IPv4", "Protocole d'adressage IP sur 32 bits."],
-    ["Pare-feu", "Mécanisme qui autorise ou bloque des flux selon des règles."],
-    ["RPO", "Perte de données maximale acceptable, exprimée en temps."],
-    ["RTO", "Durée cible pour rétablir un service après interruption."],
+    ["AD DS", "Service d'annuaire Microsoft pour les identités et objets d'un domaine."],
+    ["Adresse IP", "Identifiant logique d'une interface sur un réseau IP."],
+    ["CIDR", "Notation d'un préfixe réseau, par exemple /24."],
+    ["DHCP", "Protocole de configuration dynamique des clients réseau."],
+    ["DNS", "Système de noms de domaine, notamment utilisé pour la résolution de noms."],
+    ["Docker", "Plateforme de création et d'exécution de conteneurs."],
+    ["GPO", "Stratégie de groupe permettant de configurer des utilisateurs et ordinateurs Windows."],
+    ["Hyperviseur", "Logiciel ou couche système qui permet d'exécuter des machines virtuelles."],
+    ["NTFS", "Système de fichiers Windows qui prend notamment en charge les permissions."],
+    ["RPO", "Objectif de point de reprise : perte de données maximale visée."],
+    ["RTO", "Objectif de délai de reprise d'un service."],
+    ["Snapshot", "Capture de l'état d'une VM ou d'un volume à un instant donné."],
     ["VLAN", "Segmentation logique d'un réseau de niveau 2."],
-    ["VPN", "Tunnel logique permettant de transporter du trafic de manière protégée selon sa configuration."],
-    ["Conteneur", "Environnement isolé exécutant un processus à partir d'une image."],
-    ["Supervision", "Suivi de l'état et des performances des systèmes et services."],
-    ["Moindre privilège", "Attribution du minimum de droits nécessaire à une tâche."]
+    ["VPN", "Technologie permettant d'établir un tunnel réseau sécurisé selon sa configuration."],
+    ["Pare-feu", "Mécanisme qui autorise ou bloque des flux selon des règles."],
+    ["Moindre privilège", "Principe consistant à n'accorder que les droits nécessaires."],
+    ["Supervision", "Collecte et analyse d'états, métriques et événements d'une infrastructure."],
+    ["Journal", "Enregistrement chronologique d'événements d'un système ou d'une application."]
+  ],
+
+  servers: [
+    { id:"ad01", name:"SRV-AD01", role:"Active Directory / DNS", status:"online", cpu:18, ram:42, uptime:"12 j 04 h" },
+    { id:"web01", name:"SRV-WEB01", role:"Serveur web", status:"online", cpu:32, ram:61, uptime:"8 j 16 h" },
+    { id:"files01", name:"SRV-FICHIERS", role:"Partages réseau", status:"warning", cpu:84, ram:78, uptime:"5 j 02 h" },
+    { id:"backup01", name:"SRV-BACKUP", role:"Sauvegardes", status:"offline", cpu:0, ram:0, uptime:"Indisponible" },
+    { id:"docker01", name:"SRV-DOCKER", role:"Conteneurs", status:"online", cpu:24, ram:55, uptime:"3 j 11 h" }
   ]
 };
