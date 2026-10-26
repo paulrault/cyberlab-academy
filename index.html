@@ -3,972 +3,847 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0b1220">
-<title>CyberLab Academy | Apprendre l'informatique</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#091426">
+<title>CyberLab Academy V2</title>
 <style>
-:root {
-  --bg:#09111f;
-  --panel:#111d30;
-  --panel2:#182840;
-  --text:#edf4ff;
-  --muted:#9badc6;
-  --accent:#60a5fa;
-  --border:#293a54;
-  --green:#34d399;
-  --red:#fb7185;
-  --purple:#b7a2ff;
+:root{
+ --bg:#091426;--panel:#111f34;--panel2:#1a2b45;
+ --text:#edf5ff;--muted:#a0b2ca;--accent:#70b7ff;
+ --border:#2b405d;--good:#40d9a0;--bad:#ff8297;
+ --warning:#f4c66a;--shadow:0 12px 35px #0002;
 }
-body.light {
-  --bg:#f2f6fc;
-  --panel:#fff;
-  --panel2:#e9f0fa;
-  --text:#15243b;
-  --muted:#61718a;
-  --accent:#2563eb;
-  --border:#d5dfed;
-  --green:#059669;
-  --red:#e11d48;
-  --purple:#7c3aed;
+body.light{
+ --bg:#f2f6fc;--panel:#fff;--panel2:#e9f0fa;
+ --text:#17263d;--muted:#60718b;--accent:#2463db;
+ --border:#d5e0ee;--good:#07865e;--bad:#d82c51;
+ --warning:#986300;--shadow:0 8px 25px #1d355710;
 }
-* {box-sizing:border-box}
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font:15px/1.6 system-ui,-apple-system,Segoe UI,sans-serif;
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+ font:14px/1.65 system-ui,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible{
+ outline:2px solid var(--accent);outline-offset:3px}
+.layout{min-height:100vh;display:grid;grid-template-columns:250px minmax(0,1fr)}
+aside{padding:22px 15px;background:var(--panel);
+ border-right:1px solid var(--border)}
+.brand{font-size:22px;font-weight:850;letter-spacing:-.8px}
+.brand span{color:var(--accent)}
+.tagline{font-size:10px;letter-spacing:1px;color:var(--muted);margin-bottom:25px}
+.nav-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+ color:var(--muted);margin:22px 10px 8px}
+.nav{display:block;width:100%;border:0;border-radius:9px;padding:11px 12px;
+ margin:3px 0;text-align:left;color:var(--muted);background:transparent}
+.nav:hover,.nav.active{background:var(--panel2);color:var(--text)}
+.nav.active{box-shadow:inset 3px 0 var(--accent)}
+.sidebox{margin-top:26px;padding:13px;border:1px solid var(--border);
+ border-radius:12px;color:var(--muted);font-size:12px}
+main{padding:27px;min-width:0}
+.topbar{display:flex;justify-content:space-between;align-items:center;
+ gap:14px;margin-bottom:24px}
+h1{font-size:25px;line-height:1.3;margin:0}
+h2{font-size:19px;margin:0 0 12px}
+h3{font-size:15px;margin:0 0 7px}
+p{margin:8px 0}
+.muted,.subtitle{color:var(--muted)}
+.subtitle{font-size:12px;margin-top:5px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn{border:1px solid var(--border);background:var(--panel);
+ color:var(--text);padding:9px 12px;border-radius:9px}
+.btn.primary{background:var(--accent);color:#071629;border-color:var(--accent);
+ font-weight:750}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.field{width:100%;min-width:0;padding:11px;border:1px solid var(--border);
+ border-radius:9px;background:var(--bg);color:var(--text)}
+.searchbar{display:flex;gap:9px;margin-bottom:21px}
+.searchbar input{flex:1}
+.section{display:none}
+.section.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{min-width:0;padding:18px;background:var(--panel);
+ border:1px solid var(--border);border-radius:14px;margin-bottom:15px}
+.card p{color:var(--muted);font-size:13px}
+.hero{padding:25px;background:linear-gradient(130deg,#153459,#14223a);
+ border:1px solid #345678;border-radius:16px;margin-bottom:20px}
+.hero h2{font-size:25px;margin:12px 0 8px;color:#f3f8ff}
+.hero p{color:#c2d8f3;max-width:680px}
+.hero .btn{margin-top:10px}
+.icon{font-size:27px;margin-bottom:10px}
+.badge{display:inline-block;padding:4px 8px;border-radius:7px;
+ background:var(--panel2);color:var(--accent);font-size:11px}
+.statgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+ gap:12px;margin-bottom:20px}
+.stat{padding:15px;border:1px solid var(--border);background:var(--panel);
+ border-radius:12px}
+.stat small{display:block;color:var(--muted)}
+.stat strong{display:block;font-size:26px;margin-top:5px}
+.progress{height:7px;background:var(--border);border-radius:20px;
+ overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:var(--accent);transition:width .2s}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.course-title{font-weight:750;font-size:16px;margin:10px 0 5px}
+.course-desc{min-height:60px}
+.lesson{display:flex;gap:12px;align-items:flex-start;
+ padding:13px;border:1px solid var(--border);border-radius:10px;
+ background:var(--panel);margin:8px 0}
+.lesson input{margin-top:5px;accent-color:var(--accent)}
+.lesson .grow{flex:1;min-width:0}
+.lesson p{font-size:12px;color:var(--muted)}
+.tag{font-size:10px;color:var(--muted)}
+.code{white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:auto;
+ padding:15px;background:#060d18;color:#b9e0ff;border-radius:10px;
+ border:1px solid var(--border);font:13px/1.8 Consolas,monospace}
+.callout{padding:13px;border-left:3px solid var(--accent);
+ background:var(--panel2);border-radius:6px;margin:14px 0;font-size:13px}
+.exercise{border:1px solid var(--border);border-radius:12px;
+ padding:17px;margin:12px 0;background:var(--panel)}
+.exercise textarea{min-height:90px;resize:vertical}
+.feedback{font-size:13px;margin-top:12px}
+.good{color:var(--good)}.bad{color:var(--bad)}
+.options{display:grid;gap:8px;margin:14px 0}
+.option{padding:12px;border:1px solid var(--border);border-radius:9px;
+ background:var(--panel);color:var(--text);text-align:left}
+.option:hover{border-color:var(--accent)}
+.option.correct{border-color:var(--good)}
+.option.wrong{border-color:var(--bad)}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px}
+.toolbar>*{flex:1}
+.list{display:grid;gap:9px}
+.definition{padding:12px 0;border-bottom:1px solid var(--border)}
+.definition strong{font-size:14px}
+.definition p{color:var(--muted);font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+[hidden]{display:none!important}
+@media(max-width:1050px){
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .statgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
-button,input,select {font:inherit}
-button {cursor:pointer}
-button:focus-visible,input:focus-visible {
-  outline:2px solid var(--accent);
-  outline-offset:3px;
-}
-a {color:var(--accent)}
-.layout {
-  display:grid;
-  grid-template-columns:250px minmax(0,1fr);
-  min-height:100vh;
-}
-aside {
-  background:var(--panel);
-  border-right:1px solid var(--border);
-  padding:23px 16px;
-}
-.brand {
-  font-size:22px;
-  font-weight:850;
-  letter-spacing:-.8px;
-  margin:0 0 5px;
-}
-.brand span {color:var(--accent)}
-.tagline {font-size:12px;color:var(--muted);margin-bottom:27px}
-.nav-label {
-  font-size:10px;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin:20px 10px 7px;
-}
-.nav {
-  width:100%;
-  display:block;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  text-align:left;
-  padding:11px 12px;
-  border-radius:9px;
-  margin:3px 0;
-}
-.nav:hover,.nav.active {
-  background:var(--panel2);
-  color:var(--text);
-}
-.nav.active {box-shadow:inset 3px 0 var(--accent)}
-.sidebar-bottom {
-  margin-top:28px;
-  padding:13px;
-  background:var(--panel2);
-  border-radius:12px;
-  font-size:12px;
-  color:var(--muted);
-}
-main {min-width:0;padding:28px}
-.topbar {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-  margin-bottom:25px;
-}
-h1 {font-size:26px;line-height:1.3;margin:0}
-h2 {font-size:19px;line-height:1.4;margin:0 0 12px}
-h3 {font-size:15px;margin:0 0 7px}
-.subtitle {font-size:13px;color:var(--muted);margin-top:6px}
-.actions {display:flex;gap:8px;align-items:center}
-.btn {
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:9px 13px;
-  background:var(--panel);
-  color:var(--text);
-}
-.btn.primary {
-  background:var(--accent);
-  border-color:var(--accent);
-  color:#071426;
-  font-weight:750;
-}
-.btn:hover {filter:brightness(1.1)}
-.searchbar {
-  display:flex;
-  gap:9px;
-  margin-bottom:22px;
-}
-.field {
-  min-width:0;
-  width:100%;
-  padding:11px 12px;
-  border:1px solid var(--border);
-  border-radius:9px;
-  background:var(--panel);
-  color:var(--text);
-}
-.searchbar .field {flex:1}
-.grid {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:15px;
-}
-.card {
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:19px;
-  min-width:0;
-}
-.card p {font-size:13px;color:var(--muted)}
-.card-icon {
-  width:42px;height:42px;
-  display:grid;place-items:center;
-  background:var(--panel2);
-  border-radius:11px;
-  font-size:22px;
-  margin-bottom:15px;
-}
-.card-bottom {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:8px;
-  margin-top:17px;
-}
-.badge {
-  color:var(--accent);
-  background:var(--panel2);
-  border-radius:6px;
-  padding:4px 8px;
-  font-size:11px;
-}
-.stats {
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:13px;
-  margin-bottom:22px;
-}
-.stat {
-  padding:16px;
-  background:var(--panel);
-  border:1px solid var(--border);
-  border-radius:12px;
-}
-.stat-label {font-size:12px;color:var(--muted)}
-.stat-value {font-size:27px;font-weight:800;margin-top:5px}
-.progress {
-  height:7px;
-  border-radius:20px;
-  overflow:hidden;
-  background:var(--border);
-  margin:12px 0;
-}
-.progress div {
-  height:100%;
-  background:var(--accent);
-  transition:width .2s;
-}
-.section {display:none}
-.section.active {display:block}
-.intro {margin-bottom:20px}
-.intro p {color:var(--muted);font-size:13px}
-.course-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:15px;
-}
-.course-content {max-width:850px}
-.course-content p,.course-content li {font-size:14px}
-.course-content li {margin:7px 0}
-.code {
-  background:#070d17;
-  color:#b9dcff;
-  padding:15px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  overflow:auto;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  font:13px/1.7 ui-monospace,Consolas,monospace;
-}
-.callout {
-  padding:13px 15px;
-  border-left:3px solid var(--accent);
-  background:var(--panel2);
-  border-radius:7px;
-  font-size:13px;
-  margin:15px 0;
-}
-.lesson-list {display:grid;gap:10px}
-.lesson {
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-  padding:14px;
-  border:1px solid var(--border);
-  border-radius:10px;
-  background:var(--panel);
-}
-.lesson input {margin-top:5px;accent-color:var(--accent)}
-.lesson div {flex:1;min-width:0}
-.lesson p {font-size:12px;color:var(--muted);margin:4px 0 0}
-.quiz-question {font-weight:700;margin:15px 0 9px}
-.answer {
-  display:block;
-  width:100%;
-  text-align:left;
-  padding:12px;
-  margin:7px 0;
-  border:1px solid var(--border);
-  background:var(--panel);
-  color:var(--text);
-  border-radius:9px;
-}
-.answer:hover {border-color:var(--accent)}
-.answer.correct {border-color:var(--green)}
-.answer.wrong {border-color:var(--red)}
-.feedback {font-size:13px;margin:12px 0}
-.terminal {
-  background:#060c14;
-  border-radius:12px;
-  padding:18px;
-  color:#c2f5dc;
-  font:13px/1.8 ui-monospace,Consolas,monospace;
-}
-.terminal-output {
-  min-height:160px;
-  max-height:300px;
-  overflow:auto;
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-}
-.terminal-form {display:flex;gap:8px;margin-top:12px}
-.terminal-form input {
-  flex:1;min-width:0;
-  background:#101a29;
-  color:#e2f5ff;
-  border:1px solid #31425a;
-  padding:10px;border-radius:7px;
-}
-.terminal-form button {
-  background:#2563eb;color:white;border:0;
-  border-radius:7px;padding:9px 13px;
-}
-.note {font-size:12px;color:var(--muted)}
-.empty {color:var(--muted);padding:22px;text-align:center}
-footer {text-align:center;color:var(--muted);font-size:11px;padding:30px 0 5px}
-@media(max-width:1050px) {
-  .grid {grid-template-columns:repeat(2,minmax(0,1fr))}
-  .stats {grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-@media(max-width:700px) {
-  .layout {grid-template-columns:1fr}
-  aside {border-right:0;border-bottom:1px solid var(--border);padding:14px}
-  .tagline,.nav-label,.sidebar-bottom {display:none}
-  .brand {margin-bottom:10px}
-  .nav-list {display:flex;gap:5px;overflow-x:auto}
-  .nav {width:auto;white-space:nowrap;margin:0}
-  main {padding:17px}
-  .topbar {align-items:flex-start}
-  h1 {font-size:21px}
-  .actions {flex-direction:column;align-items:stretch}
-  .grid,.course-grid {grid-template-columns:1fr}
-  .stats {gap:8px}
-  .stat {padding:12px}
-  .stat-value {font-size:22px}
+@media(max-width:700px){
+ .layout{grid-template-columns:1fr}
+ aside{border-right:0;border-bottom:1px solid var(--border);padding:13px}
+ .tagline,.sidebox,.nav-label{display:none}
+ .brand{margin-bottom:10px}
+ .nav-list{display:flex;overflow-x:auto;gap:4px}
+ .nav{white-space:nowrap;width:auto;margin:0}
+ main{padding:15px}
+ .topbar{align-items:flex-start}
+ h1{font-size:21px}
+ .actions{flex-direction:column}
+ .grid,.two{grid-template-columns:1fr}
+ .statgrid{gap:8px}
+ .stat{padding:11px}
+ .stat strong{font-size:22px}
+ .hero h2{font-size:21px}
 }
 </style>
 </head>
 <body>
 <div class="layout">
 <aside>
-  <div class="brand">CyberLab<span>.</span></div>
-  <div class="tagline">ACADEMY · APPRENDRE EN PRATIQUANT</div>
-
-  <div class="nav-list">
-    <div class="nav-label">Espace étudiant</div>
-    <button class="nav active" data-page="dashboard">◈ Tableau de bord</button>
-    <button class="nav" data-page="catalog">▦ Catalogue des cours</button>
-    <button class="nav" data-page="lessons">☑ Mes leçons</button>
-    <button class="nav" data-page="quiz">✎ Quiz informatique</button>
-
-    <div class="nav-label">Laboratoire</div>
-    <button class="nav" data-page="terminal">⌘ Terminal simulé</button>
-    <button class="nav" data-page="glossary">◇ Glossaire réseau</button>
-    <button class="nav" data-page="about">ⓘ À propos</button>
-  </div>
-
-  <div class="sidebar-bottom">
-    <strong>Mode apprentissage</strong>
-    <p>Apprends les bases, valide tes connaissances et progresse à ton rythme.</p>
-    <span>Version 1.0 · Hors ligne après chargement</span>
-  </div>
+ <div class="brand">CyberLab<span>.</span></div>
+ <div class="tagline">ACADEMY · BTS SIO SISR</div>
+ <div class="nav-list">
+  <div class="nav-label">Apprendre</div>
+  <button class="nav active" data-page="dashboard">◈ Tableau de bord</button>
+  <button class="nav" data-page="courses">▦ Cours techniques</button>
+  <button class="nav" data-page="exercises">⌘ Travaux pratiques</button>
+  <button class="nav" data-page="quiz">✎ Quiz & révisions</button>
+  <button class="nav" data-page="exam">▤ Examens blancs</button>
+  <div class="nav-label">Ressources</div>
+  <button class="nav" data-page="glossary">◇ Glossaire</button>
+  <button class="nav" data-page="progress">◎ Ma progression</button>
+  <button class="nav" data-page="settings">⚙ Sauvegardes</button>
+ </div>
+ <div class="sidebox">
+  <strong>Laboratoire pédagogique</strong>
+  <p>Apprends, pratique, vérifie et progresse.</p>
+  <span>V2.0 · Stockage local</span>
+ </div>
 </aside>
 
 <main>
 <header class="topbar">
-  <div>
-    <h1 id="pageTitle">Tableau de bord</h1>
-    <div class="subtitle" id="dateText"></div>
-  </div>
-  <div class="actions">
-    <button class="btn" id="themeButton">☼ Thème</button>
-    <button class="btn primary" id="continueButton">Continuer →</button>
-  </div>
+ <div>
+  <h1 id="pageTitle">Tableau de bord</h1>
+  <div class="subtitle" id="dateLabel"></div>
+ </div>
+ <div class="actions">
+  <button class="btn" id="themeBtn">☼ Thème</button>
+  <button class="btn primary" data-page="courses">Apprendre →</button>
+ </div>
 </header>
 
 <div class="searchbar">
-  <input class="field" id="searchInput"
-    placeholder="Rechercher un cours, une notion, un protocole..."
-    aria-label="Rechercher dans CyberLab">
-  <button class="btn" id="searchButton">Rechercher</button>
+ <input class="field" id="globalSearch" placeholder="Rechercher un cours ou une notion...">
+ <button class="btn" id="searchBtn">Rechercher</button>
 </div>
 
 <section class="section active" id="dashboard">
-  <div class="card" style="margin-bottom:18px">
-    <span class="badge">TON ESPACE D'APPRENTISSAGE</span>
-    <h2 style="font-size:25px;margin-top:13px">Bienvenue dans CyberLab Academy.</h2>
-    <p>Découvre les systèmes, comprends les réseaux et entraîne-toi avec des exercices interactifs.</p>
-    <button class="btn primary" data-go="catalog">Explorer les cours →</button>
-  </div>
-
-  <div class="stats">
-    <div class="stat">
-      <div class="stat-label">Cours disponibles</div>
-      <div class="stat-value" id="courseCount">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Leçons validées</div>
-      <div class="stat-value" id="lessonCount">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Progression</div>
-      <div class="stat-value" id="progressCount">0%</div>
-    </div>
-    <div class="stat">
-      <div class="stat-label">Bonnes réponses</div>
-      <div class="stat-value" id="scoreCount">0</div>
-    </div>
-  </div>
-
-  <div class="card" style="margin-bottom:20px">
-    <h2>Ma progression globale</h2>
-    <div class="progress"><div id="mainProgress" style="width:0%"></div></div>
-    <div class="note" id="progressLabel">0 leçon validée</div>
-  </div>
-
-  <h2>Domaines à découvrir</h2>
-  <div class="grid" id="featuredCourses"></div>
+ <div class="hero">
+  <span class="badge">TON ESPACE DE FORMATION</span>
+  <h2>Construis tes compétences informatiques.</h2>
+  <p>Des cours techniques, des mises en situation et des quiz pour progresser en administration système et réseaux.</p>
+  <button class="btn primary" data-page="courses">Découvrir les cours →</button>
+ </div>
+ <div class="statgrid">
+  <div class="stat"><small>Modules</small><strong id="sCourses">0</strong></div>
+  <div class="stat"><small>Leçons validées</small><strong id="sLessons">0</strong></div>
+  <div class="stat"><small>Progression</small><strong id="sProgress">0%</strong></div>
+  <div class="stat"><small>Bonnes réponses</small><strong id="sScore">0</strong></div>
+ </div>
+ <div class="card">
+  <div class="row"><h2>Mon parcours global</h2><span id="progressText" class="muted"></span></div>
+  <div class="progress"><div id="globalBar" style="width:0%"></div></div>
+  <p class="muted">Valide une leçon après l'avoir étudiée. Tu peux modifier ton suivi à tout moment.</p>
+ </div>
+ <h2>Reprendre l'apprentissage</h2>
+ <div class="grid" id="featured"></div>
+ <div class="card">
+  <h2>Dernière activité</h2>
+  <div id="recentActivity" class="list"></div>
+ </div>
 </section>
 
-<section class="section" id="catalog">
-  <div class="intro">
-    <h2>Catalogue des cours</h2>
-    <p>Choisis un domaine pour consulter les notions essentielles et les exercices associés.</p>
-  </div>
-  <div class="grid" id="courseCatalog"></div>
-  <p id="noResults" class="empty" hidden>Aucun cours ne correspond à ta recherche.</p>
+<section class="section" id="courses">
+ <div class="card">
+  <h2>Catalogue technique</h2>
+  <p>Choisis un module puis consulte les fiches de cours et les objectifs pédagogiques.</p>
+ </div>
+ <div class="grid" id="courseGrid"></div>
+ <div id="courseDetail" hidden></div>
+ <p id="courseEmpty" class="muted" hidden>Aucun cours correspondant.</p>
 </section>
 
-<section class="section" id="course">
-  <div class="course-content">
-    <button class="btn" data-go="catalog">← Retour au catalogue</button>
-    <div id="courseDetail" style="margin-top:20px"></div>
+<section class="section" id="exercises">
+ <div class="card">
+  <h2>Travaux pratiques guidés</h2>
+  <p>Des exercices pour comprendre une configuration, diagnostiquer un problème et proposer une solution.</p>
+  <div class="toolbar">
+   <select id="exerciseFilter" class="field">
+    <option value="all">Tous les domaines</option>
+    <option value="windows">Windows Server</option>
+    <option value="network">Réseaux</option>
+    <option value="linux">Linux</option>
+    <option value="security">Cybersécurité</option>
+    <option value="docker">Docker</option>
+    <option value="virtualization">Virtualisation</option>
+   </select>
+   <select id="exerciseStatus" class="field">
+    <option value="all">Tous les états</option>
+    <option value="todo">À réaliser</option>
+    <option value="done">Terminés</option>
+   </select>
   </div>
-</section>
-
-<section class="section" id="lessons">
-  <div class="intro">
-    <h2>Mes leçons</h2>
-    <p>Coche les notions que tu as étudiées. Ta progression est enregistrée dans ce navigateur.</p>
-  </div>
-  <div id="lessonList" class="lesson-list"></div>
+ </div>
+ <div id="exerciseList"></div>
 </section>
 
 <section class="section" id="quiz">
-  <div class="intro">
-    <h2>Quiz informatique</h2>
-    <p>Teste tes connaissances avec des questions de niveau débutant.</p>
+ <div class="card">
+  <h2>Quiz de révision</h2>
+  <p>Choisis un domaine. Les questions vérifient les connaissances fondamentales.</p>
+  <div class="toolbar">
+   <select id="quizCategory" class="field">
+    <option value="all">Tous les domaines</option>
+    <option value="windows">Windows Server</option>
+    <option value="network">Réseaux</option>
+    <option value="linux">Linux</option>
+    <option value="security">Cybersécurité</option>
+    <option value="docker">Docker</option>
+    <option value="virtualization">Virtualisation</option>
+   </select>
+   <button class="btn primary" id="startQuiz">Lancer un quiz</button>
   </div>
-  <div class="card" style="max-width:700px">
-    <div class="badge" id="quizCounter">Question 1</div>
-    <div id="quizArea"></div>
-    <div id="quizFeedback" class="feedback" aria-live="polite"></div>
-    <button class="btn primary" id="nextQuestion" hidden>Question suivante →</button>
-    <button class="btn" id="restartQuiz">Recommencer le quiz</button>
-  </div>
+ </div>
+ <div class="card" id="quizPanel" hidden>
+  <div class="row"><span class="badge" id="quizCounter"></span><span id="quizLiveScore" class="muted"></span></div>
+  <h2 id="questionText" style="margin-top:18px"></h2>
+  <div id="answerOptions" class="options"></div>
+  <div id="answerFeedback" class="feedback" aria-live="polite"></div>
+  <button class="btn primary" id="nextQuestion" hidden>Suivant →</button>
+ </div>
+ <div class="card">
+  <h2>Résultats précédents</h2>
+  <div id="quizHistory"></div>
+ </div>
 </section>
 
-<section class="section" id="terminal">
-  <div class="intro">
-    <h2>Terminal pédagogique</h2>
-    <p>Un simulateur sans accès au système réel pour découvrir quelques commandes Linux.</p>
-  </div>
-  <div class="terminal">
-    <div>CyberLab Linux Simulator 1.0</div>
-    <div>Environnement pédagogique fictif — aucune commande système exécutée.</div>
-    <div class="terminal-output" id="terminalOutput">Bienvenue !
-Tape help pour afficher les commandes disponibles.</div>
-    <form id="terminalForm" class="terminal-form">
-      <input id="terminalInput" autocomplete="off" placeholder="Saisis une commande..." aria-label="Commande simulée">
-      <button>Exécuter</button>
-    </form>
-  </div>
-  <p class="note">Ce terminal ne remplace pas une machine Debian. Il simule seulement des réponses prédéfinies.</p>
+<section class="section" id="exam">
+ <div class="card">
+  <h2>Examens blancs</h2>
+  <p>Des mini-épreuves de révision. Elles sont pédagogiques et ne constituent pas des sujets officiels.</p>
+  <div class="callout">Consigne : réponds d'abord sans consulter les corrections, puis explique pourquoi chaque solution est adaptée.</div>
+  <button class="btn primary" id="startExam">Commencer l'épreuve de révision</button>
+ </div>
+ <div class="card" id="examPanel" hidden>
+  <div class="row"><h2>Épreuve de révision</h2><span id="examCounter" class="badge"></span></div>
+  <div id="examQuestions"></div>
+  <button class="btn primary" id="submitExam">Corriger mon épreuve</button>
+  <div id="examResult" aria-live="polite"></div>
+ </div>
 </section>
 
 <section class="section" id="glossary">
-  <div class="intro">
-    <h2>Glossaire réseau</h2>
-    <p>Les notions essentielles pour comprendre une infrastructure informatique.</p>
-  </div>
-  <div class="card">
-    <input class="field" id="glossarySearch" placeholder="Rechercher une définition...">
-    <div id="glossaryList" style="margin-top:15px"></div>
-  </div>
+ <div class="card">
+  <h2>Glossaire informatique</h2>
+  <p>Recherche une notion pour afficher sa définition.</p>
+  <input class="field" id="glossarySearch" placeholder="Ex. : DNS, VLAN, GPO...">
+  <div id="glossaryList" style="margin-top:12px"></div>
+ </div>
 </section>
 
-<section class="section" id="about">
-  <div class="course-content card">
-    <h2>À propos de CyberLab Academy</h2>
-    <p>CyberLab Academy est un projet pédagogique indépendant destiné à découvrir l'administration système, les réseaux et les bonnes pratiques informatiques.</p>
-    <h3>Technologies</h3>
-    <ul>
-      <li>HTML pour structurer les pages.</li>
-      <li>CSS pour l'interface responsive.</li>
-      <li>JavaScript pour les interactions.</li>
-      <li>LocalStorage pour conserver la progression.</li>
-      <li>GitHub Pages pour héberger le site statique.</li>
-    </ul>
-    <div class="callout">Attention : les données de progression restent dans le navigateur. Elles ne sont pas partagées entre plusieurs appareils.</div>
-    <h3>Réinitialiser la progression</h3>
-    <p>Cette action efface les leçons validées et le score du quiz enregistrés par ce site.</p>
-    <button class="btn" id="resetButton">Réinitialiser mes données</button>
-  </div>
+<section class="section" id="progress">
+ <div class="card">
+  <h2>Ma progression par module</h2>
+  <p>Le suivi est calculé à partir des leçons validées dans ce navigateur.</p>
+  <div id="moduleProgress"></div>
+ </div>
+ <div class="card">
+  <h2>Historique des quiz</h2>
+  <div id="progressHistory"></div>
+ </div>
 </section>
 
-<footer>CyberLab Academy · Projet pédagogique · 2026</footer>
+<section class="section" id="settings">
+ <div class="card">
+  <h2>Sauvegarder mes données</h2>
+  <p>Exporte ta progression dans un fichier JSON afin de la conserver ou de la transférer manuellement sur un autre appareil.</p>
+  <div class="actions">
+   <button class="btn primary" id="exportBtn">Exporter la sauvegarde</button>
+   <button class="btn" id="importBtn">Importer une sauvegarde</button>
+   <input id="importFile" type="file" accept=".json,application/json" hidden>
+  </div>
+  <p id="backupMessage" class="muted" aria-live="polite"></p>
+ </div>
+ <div class="card">
+  <h2>Préférences</h2>
+  <p>Thème actuel : <strong id="themeLabel"></strong></p>
+  <button class="btn" id="settingsTheme">Changer de thème</button>
+ </div>
+ <div class="card">
+  <h2>Réinitialiser le parcours</h2>
+  <p>Efface les leçons validées, les résultats des quiz et les exercices terminés.</p>
+  <button class="btn" id="resetBtn">Réinitialiser mes données</button>
+ </div>
+ <div class="card">
+  <h2>À propos</h2>
+  <p>CyberLab Academy V2 est un projet pédagogique statique en HTML, CSS et JavaScript.</p>
+  <p class="muted">Aucun compte n'est créé. Les données restent dans le stockage local du navigateur jusqu'à leur suppression ou leur export.</p>
+ </div>
+</section>
+
+<footer>CyberLab Academy V2 · Formation informatique · 2026</footer>
 </main>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
+"use strict";
 
-const courses = [
-  {
-    id:"windows",
-    title:"Windows Server",
-    icon:"🖥️",
-    level:"Débutant",
-    desc:"Découvre les rôles d'un serveur et l'administration d'un domaine.",
-    lessons:[
-      ["Introduction à Windows Server","Comprendre les rôles d'un serveur et les services réseau."],
-      ["Active Directory","Comprendre les domaines, les utilisateurs, les groupes et les OU."],
-      ["DNS et DHCP","Comprendre la résolution de noms et l'attribution automatique d'adresses IP."]
-    ],
-    content:`
-      <h2>Windows Server</h2>
-      <p>Windows Server est un système d'exploitation destiné aux infrastructures informatiques.</p>
-      <h3>Active Directory</h3>
-      <p>Active Directory Domain Services permet de centraliser la gestion des identités et des ressources dans un domaine.</p>
-      <h3>Notions importantes</h3>
-      <ul>
-        <li><strong>Domaine :</strong> ensemble organisé d'objets et de ressources.</li>
-        <li><strong>OU :</strong> unité d'organisation permettant de classer des objets et de déléguer leur gestion.</li>
-        <li><strong>GPO :</strong> stratégie permettant d'appliquer des paramètres aux utilisateurs ou ordinateurs.</li>
-        <li><strong>DNS :</strong> service de résolution des noms en adresses IP.</li>
-        <li><strong>DHCP :</strong> service qui attribue automatiquement des paramètres réseau aux clients.</li>
-      </ul>
-      <div class="callout">Exercice : explique pourquoi un poste client d'un domaine Active Directory doit pouvoir joindre le serveur DNS approprié.</div>`
-  },
-  {
-    id:"network",
-    title:"Réseaux informatiques",
-    icon:"🌐",
-    level:"Débutant",
-    desc:"Adresse IP, masque, passerelle, DNS, VLAN et routage.",
-    lessons:[
-      ["Adressage IPv4","Identifier une adresse IP, un masque et une passerelle."],
-      ["Sous-réseaux","Comprendre la séparation logique des réseaux."],
-      ["VLAN et routage","Comprendre la segmentation et la communication entre réseaux."]
-    ],
-    content:`
-      <h2>Les réseaux informatiques</h2>
-      <p>Un réseau permet à des équipements d'échanger des données selon des règles communes.</p>
-      <h3>Les quatre paramètres courants d'un poste</h3>
-      <ul>
-        <li>Adresse IP : identifie une interface sur le réseau IP.</li>
-        <li>Masque : détermine la partie réseau et la partie hôte de l'adresse.</li>
-        <li>Passerelle : permet de joindre d'autres réseaux.</li>
-        <li>DNS : traduit les noms de domaine en adresses IP.</li>
-      </ul>
-      <div class="code">Adresse :   192.168.10.20
-Masque :    255.255.255.0
-Passerelle : 192.168.10.1
-DNS :       192.168.10.10</div>
-      <p>Exemple pédagogique : ces paramètres supposent que les adresses correspondent réellement à ton réseau de laboratoire.</p>
-      <h3>VLAN</h3>
-      <p>Un VLAN sépare logiquement des équipements au sein d'une infrastructure compatible. La communication entre VLAN nécessite généralement du routage.</p>`
-  },
-  {
-    id:"linux",
-    title:"Linux et Debian",
-    icon:"🐧",
-    level:"Débutant",
-    desc:"Découvre le terminal, les fichiers, les services et les permissions.",
-    lessons:[
-      ["Commandes de base","Découvrir pwd, ls, cd, mkdir et cat."],
-      ["Utilisateurs et permissions","Comprendre les comptes et les droits d'accès."],
-      ["Services Linux","Comprendre le rôle d'un service système."]
-    ],
-    content:`
-      <h2>Linux et Debian</h2>
-      <p>Debian est une distribution Linux adaptée aux serveurs et aux postes de travail.</p>
-      <h3>Commandes essentielles</h3>
-      <div class="code">pwd       # afficher le répertoire courant
-ls        # lister les fichiers
-cd /tmp   # changer de répertoire
-mkdir lab # créer un dossier
-cat notes.txt # lire un fichier texte</div>
-      <h3>Permissions</h3>
-      <p>Les permissions Linux distinguent les droits du propriétaire, du groupe et des autres utilisateurs.</p>
-      <h3>Services</h3>
-      <p>Un service peut assurer une fonction en arrière-plan, par exemple un serveur web ou un service de supervision.</p>
-      <div class="callout">Entraîne-toi d'abord dans une machine virtuelle de test avant de modifier un serveur utilisé par d'autres personnes.</div>`
-  },
-  {
-    id:"security",
-    title:"Cybersécurité défensive",
-    icon:"🛡️",
-    level:"Débutant",
-    desc:"Protection des comptes, mises à jour, sauvegardes et journaux.",
-    lessons:[
-      ["Hygiène numérique","Reconnaître les mises à jour et les bonnes pratiques de sécurité."],
-      ["Pare-feu et filtrage","Comprendre le rôle des règles réseau."],
-      ["Journaux et supervision","Découvrir les journaux et la détection d'anomalies."]
-    ],
-    content:`
-      <h2>Cybersécurité défensive</h2>
-      <p>La sécurité informatique vise à protéger les systèmes, les données et les services.</p>
-      <h3>Principes fondamentaux</h3>
-      <ul>
-        <li>Utiliser des mots de passe uniques et robustes.</li>
-        <li>Activer l'authentification multifacteur quand elle est disponible.</li>
-        <li>Installer les mises à jour de sécurité.</li>
-        <li>Limiter les droits au strict nécessaire.</li>
-        <li>Réaliser des sauvegardes et tester leur restauration.</li>
-        <li>Surveiller les journaux et examiner les alertes.</li>
-      </ul>
-      <h3>Pare-feu</h3>
-      <p>Un pare-feu applique des règles qui autorisent ou bloquent des communications selon des critères configurés.</p>
-      <h3>Supervision</h3>
-      <p>La supervision aide à repérer les indisponibilités, les erreurs et les comportements inhabituels.</p>
-      <div class="callout">Exercice : imagine une checklist pour sécuriser un nouveau poste Windows dans une entreprise.</div>`
-  },
-  {
-    id:"docker",
-    title:"Docker et conteneurs",
-    icon:"📦",
-    level:"Intermédiaire",
-    desc:"Comprendre les images, conteneurs, volumes et réseaux Docker.",
-    lessons:[
-      ["Images et conteneurs","Distinguer le modèle d'image du conteneur en cours d'exécution."],
-      ["Volumes et données","Comprendre la persistance des données."],
-      ["Réseaux Docker","Comprendre les échanges entre conteneurs."]
-    ],
-    content:`
-      <h2>Docker</h2>
-      <p>Docker permet de construire et d'exécuter des applications dans des conteneurs isolés.</p>
-      <h3>Vocabulaire</h3>
-      <ul>
-        <li><strong>Image :</strong> modèle utilisé pour créer un conteneur.</li>
-        <li><strong>Conteneur :</strong> instance exécutable basée sur une image.</li>
-        <li><strong>Volume :</strong> mécanisme de persistance des données.</li>
-        <li><strong>Réseau :</strong> moyen d'organiser les communications entre conteneurs.</li>
-        <li><strong>Compose :</strong> décrit une application composée de plusieurs services.</li>
-      </ul>
-      <div class="code">docker ps
-docker images
-docker compose config</div>
-      <p>Ces commandes permettent respectivement de consulter les conteneurs en cours, les images locales et la validité de la configuration Compose.</p>
-      <div class="callout">Avant de déployer un service, vérifie ses ports, ses volumes, ses permissions et ses paramètres de sécurité.</div>`
-  },
-  {
-    id:"virtualization",
-    title:"Virtualisation",
-    icon:"🧩",
-    level:"Intermédiaire",
-    desc:"Découvre les machines virtuelles, les hyperviseurs et les réseaux virtuels.",
-    lessons:[
-      ["Machines virtuelles","Comprendre le système invité et l'hyperviseur."],
-      ["Réseaux virtuels","Comprendre les cartes réseau et les commutateurs virtuels."],
-      ["Snapshots et sauvegardes","Distinguer un instantané d'une véritable sauvegarde."]
-    ],
-    content:`
-      <h2>Virtualisation</h2>
-      <p>La virtualisation permet d'exécuter plusieurs machines virtuelles sur un même ordinateur physique.</p>
-      <h3>Notions clés</h3>
-      <ul>
-        <li><strong>Hôte :</strong> machine qui fournit les ressources.</li>
-        <li><strong>Invité :</strong> système exécuté dans la machine virtuelle.</li>
-        <li><strong>Hyperviseur :</strong> couche qui gère les machines virtuelles.</li>
-        <li><strong>Réseau virtuel :</strong> connecte les interfaces réseau virtuelles.</li>
-      </ul>
-      <p>VirtualBox, Hyper-V et Proxmox VE sont des solutions de virtualisation différentes.</p>
-      <div class="callout">Un instantané facilite le retour à un état antérieur, mais ne remplace pas une sauvegarde indépendante.</div>`
-  }
+const $ = id => document.getElementById(id);
+const today = () => new Date().toISOString().slice(0,10);
+const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+})[c]);
+
+const modules = [
+{
+ id:"windows",title:"Windows Server",icon:"🖥️",level:"Débutant",
+ desc:"Administration Windows, Active Directory, DNS et DHCP.",
+ lessons:[
+  {title:"Rôles et services Windows Server",body:"Un serveur peut fournir plusieurs services réseau. Le choix des rôles dépend des besoins de l'organisation.",points:["Identifier les rôles installés.","Distinguer serveur et poste client.","Documenter les services actifs."]},
+  {title:"Active Directory et unités d'organisation",body:"AD DS centralise les identités et les ressources d'un domaine. Les unités d'organisation facilitent le classement et la délégation.",points:["Créer une organisation logique.","Distinguer utilisateurs, groupes et ordinateurs.","Comprendre le rôle des stratégies de groupe."]},
+  {title:"DNS et DHCP",body:"DNS permet de résoudre les noms. DHCP distribue automatiquement les paramètres réseau aux clients.",points:["Vérifier la résolution de noms.","Comprendre une étendue DHCP.","Identifier la passerelle et les DNS distribués."]},
+  {title:"Permissions et partages",body:"Les permissions doivent être définies selon le besoin d'accès et le principe du moindre privilège.",points:["Distinguer permissions de partage et NTFS.","Utiliser des groupes pour gérer les accès.","Tester les droits avec un compte approprié."]}
+ ]
+},
+{
+ id:"network",title:"Réseaux informatiques",icon:"🌐",level:"Débutant",
+ desc:"IPv4, sous-réseaux, VLAN, routage et dépannage.",
+ lessons:[
+  {title:"Adressage IPv4",body:"Une adresse IPv4 identifie une interface réseau. Le masque détermine la partie réseau et la partie hôte.",points:["Lire une adresse CIDR.","Identifier une passerelle.","Repérer une configuration incohérente."]},
+  {title:"Sous-réseaux",body:"Le découpage en sous-réseaux permet d'organiser l'adressage et de séparer des réseaux IP.",points:["Lire un masque /24 ou /26.","Calculer un nombre d'adresses.","Identifier le réseau et le broadcast."]},
+  {title:"VLAN et routage",body:"Les VLAN séparent logiquement les domaines de niveau 2. Un routeur ou un équipement de niveau 3 assure le routage entre réseaux.",points:["Comprendre les ports access et trunk.","Identifier le rôle d'une passerelle.","Documenter les VLAN et leurs sous-réseaux."]},
+  {title:"Méthode de dépannage réseau",body:"Un diagnostic commence par la vérification physique et se poursuit avec l'adressage, la passerelle, le DNS et les services.",points:["Examiner la configuration IP.","Tester progressivement la connectivité.","Conserver les résultats des commandes."]}
+ ]
+},
+{
+ id:"linux",title:"Linux et Debian",icon:"🐧",level:"Débutant",
+ desc:"Terminal, fichiers, permissions et services.",
+ lessons:[
+  {title:"Navigation dans le terminal",body:"Les commandes pwd, ls et cd permettent de se repérer dans l'arborescence.",points:["Afficher le répertoire courant.","Lister les fichiers.","Se déplacer dans les répertoires."]},
+  {title:"Utilisateurs et permissions",body:"Linux distingue les droits du propriétaire, du groupe et des autres utilisateurs.",points:["Lire les permissions rwx.","Comprendre les groupes.","Appliquer le moindre privilège."]},
+  {title:"Gestion des services",body:"Les services peuvent fonctionner en arrière-plan. systemctl permet de consulter et gérer les unités systemd.",points:["Consulter l'état d'un service.","Examiner les journaux.","Vérifier les dépendances avant une modification."]},
+  {title:"Mises à jour et paquets",body:"APT permet de gérer les paquets Debian à partir de dépôts configurés.",points:["Mettre à jour les listes de paquets.","Consulter les paquets installés.","Lire les messages avant de confirmer une opération."]}
+ ]
+},
+{
+ id:"security",title:"Cybersécurité défensive",icon:"🛡️",level:"Fondamentaux",
+ desc:"Durcissement, pare-feu, sauvegardes et journaux.",
+ lessons:[
+  {title:"Comptes et authentification",body:"Les comptes individuels, les mots de passe uniques et l'authentification multifacteur réduisent les risques liés aux identités.",points:["Limiter les comptes administrateurs.","Appliquer une politique d'accès.","Révoquer les accès devenus inutiles."]},
+  {title:"Pare-feu et filtrage",body:"Un pare-feu applique des règles pour contrôler les communications entrantes et sortantes.",points:["Documenter la source et la destination.","Limiter les ports autorisés.","Tester les règles sans interrompre les services essentiels."]},
+  {title:"Sauvegardes et restauration",body:"Une sauvegarde utile doit être protégée et sa restauration doit être testée.",points:["Définir la fréquence.","Séparer les sauvegardes des systèmes protégés.","Documenter les procédures de restauration."]},
+  {title:"Journaux et incidents",body:"Les journaux aident à comprendre les événements et à identifier des anomalies.",points:["Corréler les événements dans le temps.","Préserver les informations utiles.","Suivre une procédure d'escalade."]}
+ ]
+},
+{
+ id:"docker",title:"Docker et conteneurs",icon:"📦",level:"Intermédiaire",
+ desc:"Images, conteneurs, volumes, ports et Compose.",
+ lessons:[
+  {title:"Images et conteneurs",body:"Une image sert de modèle. Un conteneur est une instance exécutée à partir de cette image.",points:["Lister les images.","Consulter les conteneurs.","Examiner les journaux d'un service."]},
+  {title:"Volumes et persistance",body:"Les volumes permettent de conserver les données au-delà du cycle de vie d'un conteneur.",points:["Identifier les répertoires de données.","Prévoir une sauvegarde.","Tester la restauration."]},
+  {title:"Ports et réseaux Docker",body:"Les ports publiés exposent des services vers l'hôte. Les réseaux organisent les communications entre conteneurs.",points:["Identifier les ports utilisés.","Éviter les conflits.","Limiter les expositions inutiles."]},
+  {title:"Docker Compose",body:"Compose décrit une application multi-services dans un fichier YAML.",points:["Lire les services et volumes.","Valider la configuration.","Comprendre les variables d'environnement."]}
+ ]
+},
+{
+ id:"virtualization",title:"Virtualisation",icon:"🧩",level:"Intermédiaire",
+ desc:"Hyperviseurs, machines virtuelles, snapshots et réseaux.",
+ lessons:[
+  {title:"Hyperviseurs et machines virtuelles",body:"Une machine virtuelle dispose de ressources virtuelles gérées par un hyperviseur.",points:["Distinguer hôte et invité.","Dimensionner les ressources.","Comprendre l'isolation."]},
+  {title:"Réseaux virtuels",body:"Les commutateurs virtuels relient les interfaces réseau des machines virtuelles à d'autres réseaux.",points:["Distinguer NAT, bridge et réseau isolé.","Vérifier les cartes virtuelles.","Tester la connectivité."]},
+  {title:"Snapshots et sauvegardes",body:"Un snapshot capture un état à un instant donné. Il ne remplace pas une sauvegarde indépendante.",points:["Définir une stratégie de sauvegarde.","Protéger les copies.","Tester la restauration."]},
+  {title:"Documentation de laboratoire",body:"Une documentation précise les adresses, les rôles, les dépendances et les procédures de reprise.",points:["Tenir un plan d'adressage.","Documenter les comptes techniques sans stocker de secrets.","Consigner les changements."]}
+ ]
+}
+];
+
+const exercises = [
+ {id:"e1",module:"windows",title:"Organiser un domaine Active Directory",
+  scenario:"Une entreprise possède des utilisateurs clients et des techniciens. Elle souhaite organiser les comptes et limiter les droits.",
+  question:"Propose une organisation des OU, des groupes et des permissions. Explique pourquoi les droits doivent être attribués aux groupes plutôt qu'individuellement.",
+  correction:"Créer des OU adaptées à l'organisation, des groupes de sécurité correspondant aux fonctions, puis attribuer les permissions aux groupes. Tester les accès avec des comptes de test et appliquer le moindre privilège."},
+ {id:"e2",module:"network",title:"Diagnostiquer une panne DNS",
+  scenario:"Un poste atteint une adresse IP sur le réseau, mais ne parvient pas à ouvrir un service en utilisant son nom DNS.",
+  question:"Quelles vérifications effectues-tu dans l'ordre ? Cite les commandes ou outils utiles.",
+  correction:"Vérifier la configuration IP et les serveurs DNS, tester la connectivité, utiliser nslookup pour examiner la résolution, contrôler l'enregistrement et la disponibilité du service DNS. Ne pas conclure sans examiner les résultats."},
+ {id:"e3",module:"linux",title:"Examiner un service Debian",
+  scenario:"Un service web semble indisponible après un redémarrage de la machine.",
+  question:"Quelles vérifications réalises-tu pour identifier la cause avant de modifier la configuration ?",
+  correction:"Consulter systemctl status nom-du-service, lire les journaux avec journalctl, vérifier les ports et la configuration, examiner les dépendances puis effectuer un test contrôlé après correction."},
+ {id:"e4",module:"security",title:"Préparer une stratégie de sauvegarde",
+  scenario:"Un serveur de fichiers contient des documents importants. Une panne ou un incident de sécurité pourrait les rendre indisponibles.",
+  question:"Propose une stratégie incluant fréquence, séparation des copies et tests de restauration.",
+  correction:"Définir les objectifs de restauration et la fréquence selon la criticité, conserver des copies indépendantes et protégées, limiter les accès, surveiller les sauvegardes et tester périodiquement la restauration."},
+ {id:"e5",module:"docker",title:"Diagnostiquer un conteneur indisponible",
+  scenario:"Un conteneur est démarré mais l'application n'est pas accessible depuis le navigateur.",
+  question:"Quels contrôles effectues-tu concernant les journaux, les ports, l'application et les volumes ?",
+  correction:"Consulter docker ps, docker logs nom-du-conteneur et docker inspect. Vérifier le port publié, le port d'écoute interne, l'état de l'application, les permissions des volumes et les règles réseau."},
+ {id:"e6",module:"virtualization",title:"Concevoir un laboratoire virtuel",
+  scenario:"Tu dois héberger un serveur, un client Windows et un poste Debian dans un environnement de test isolé.",
+  question:"Décris le réseau virtuel, l'adressage et les précautions de sauvegarde que tu prévois.",
+  correction:"Définir les rôles et un plan d'adressage, utiliser un réseau virtuel adapté et isoler les tests si nécessaire. Vérifier le routage, documenter les dépendances et conserver des sauvegardes indépendantes."}
 ];
 
 const questions = [
-  {q:"Quel service traduit les noms de domaine en adresses IP ?",a:["DHCP","DNS","FTP","SMTP"],correct:1,ex:"Le DNS réalise la résolution des noms."},
-  {q:"Quel service attribue automatiquement des paramètres IP ?",a:["DHCP","DNS","SSH","HTTP"],correct:0,ex:"Le DHCP distribue notamment des adresses IP et d'autres paramètres."},
-  {q:"Que représente un conteneur Docker ?",a:["Un câble réseau","Une instance exécutable d'une image","Un masque réseau","Un compte utilisateur"],correct:1,ex:"Un conteneur est une instance basée sur une image."},
-  {q:"À quoi sert une passerelle par défaut ?",a:["À créer un utilisateur","À compresser des fichiers","À joindre d'autres réseaux","À remplacer le DNS"],correct:2,ex:"La passerelle permet généralement de transmettre le trafic vers d'autres réseaux."},
-  {q:"Quel est l'objectif principal d'une sauvegarde ?",a:["Accélérer le processeur","Pouvoir restaurer des données","Remplacer le pare-feu","Créer une adresse IP"],correct:1,ex:"Une sauvegarde permet de récupérer des données après une perte ou un incident."},
-  {q:"Que permet Active Directory Domain Services ?",a:["Gérer centralement les identités et ressources d'un domaine","Remplacer le matériel réseau","Créer des câbles virtuels automatiquement","Augmenter la RAM"],correct:0,ex:"AD DS centralise la gestion des objets et des identités dans un domaine."},
-  {q:"Que fait généralement un pare-feu ?",a:["Répare le matériel","Filtre les communications selon des règles","Crée toujours une sauvegarde","Remplace tous les antivirus"],correct:1,ex:"Un pare-feu autorise ou bloque des communications selon sa configuration."},
-  {q:"Quel outil permet de lister les fichiers sous Linux ?",a:["ls","pwd","mkdir","exit"],correct:0,ex:"La commande ls affiche le contenu d'un répertoire."}
+ {m:"windows",q:"Quel service centralise les identités d'un domaine Windows ?",a:["DHCP","AD DS","NTP","NAT"],c:1,x:"AD DS gère les identités et objets du domaine."},
+ {m:"windows",q:"À quoi sert une OU dans Active Directory ?",a:["À remplacer le DNS","À classer les objets et faciliter leur administration","À chiffrer tous les fichiers","À attribuer une adresse IP"],c:1,x:"Les OU organisent les objets et peuvent servir à déléguer l'administration."},
+ {m:"windows",q:"Quel service résout les noms de machines en adresses IP ?",a:["DNS","DHCP","SMB","RDP"],c:0,x:"DNS assure la résolution des noms."},
+ {m:"network",q:"Quel équipement assure habituellement le routage entre réseaux IP ?",a:["Un clavier","Un routeur","Un écran","Un concentrateur USB"],c:1,x:"Un routeur achemine les paquets entre réseaux."},
+ {m:"network",q:"Que signifie /24 dans une notation CIDR IPv4 ?",a:["24 routeurs","24 octets","24 bits de préfixe réseau","24 VLAN"],c:2,x:"/24 indique que 24 bits constituent le préfixe réseau."},
+ {m:"network",q:"Quel outil permet de tester la résolution DNS en ligne de commande ?",a:["nslookup","mkdir","chmod","docker images"],c:0,x:"nslookup permet d'interroger un serveur DNS."},
+ {m:"linux",q:"Quelle commande affiche le répertoire courant ?",a:["ls","pwd","cd","touch"],c:1,x:"pwd affiche le chemin du répertoire courant."},
+ {m:"linux",q:"Quel outil permet d'examiner l'état d'un service systemd ?",a:["systemctl status","ipconfig /release","git commit","docker build seulement"],c:0,x:"systemctl status fournit notamment l'état et des informations sur le service."},
+ {m:"security",q:"Quel principe consiste à accorder uniquement les droits nécessaires ?",a:["Tout autoriser","Moindre privilège","Désactiver les sauvegardes","Partager les comptes"],c:1,x:"Le moindre privilège limite les droits au besoin réel."},
+ {m:"security",q:"Pourquoi tester la restauration des sauvegardes ?",a:["Pour changer l'adresse IP","Pour vérifier que les données peuvent réellement être récupérées","Pour supprimer les journaux","Pour éviter les mises à jour"],c:1,x:"Une sauvegarde doit pouvoir être restaurée dans des conditions documentées."},
+ {m:"docker",q:"Quel est le rôle d'un volume Docker ?",a:["Conserver des données de manière persistante","Remplacer un routeur","Créer un compte AD","Modifier le noyau hôte automatiquement"],c:0,x:"Les volumes permettent de conserver les données indépendamment du cycle de vie du conteneur."},
+ {m:"docker",q:"Quelle commande liste les conteneurs en cours d'exécution ?",a:["docker ps","docker images -q seulement","pwd","systemctl list-users"],c:0,x:"docker ps affiche les conteneurs en cours d'exécution."},
+ {m:"virtualization",q:"Un snapshot remplace-t-il une sauvegarde indépendante ?",a:["Oui, toujours","Non","Uniquement sur Debian","Seulement si le serveur est éteint"],c:1,x:"Un snapshot n'offre pas à lui seul la protection d'une sauvegarde indépendante."},
+ {m:"virtualization",q:"Que désigne un système invité ?",a:["Le système exécuté dans une machine virtuelle","Le commutateur physique uniquement","Une adresse DNS","Un compte de sauvegarde"],c:0,x:"Le système invité fonctionne dans l'environnement virtualisé."}
 ];
 
 const glossary = [
- ["AD DS","Service Windows Server de gestion des identités et ressources d'un domaine."],
- ["DHCP","Protocole permettant de distribuer automatiquement des paramètres réseau."],
- ["DNS","Système de résolution des noms en informations telles que les adresses IP."],
- ["Docker","Plateforme permettant de construire et exécuter des conteneurs."],
- ["GPO","Stratégie de groupe permettant d'appliquer des paramètres à des utilisateurs ou ordinateurs Windows."],
- ["HTTP","Protocole utilisé pour les échanges web."],
- ["IP","Protocole d'adressage et d'acheminement des paquets sur les réseaux."],
- ["LAN","Réseau local couvrant une zone limitée."],
- ["NAT","Mécanisme de traduction d'adresses réseau."],
- ["Pare-feu","Équipement ou logiciel qui filtre les communications réseau."],
- ["Routeur","Équipement qui achemine les paquets entre des réseaux."],
- ["SSH","Protocole permettant notamment une administration distante chiffrée."],
- ["TCP","Protocole de transport fournissant un flux fiable et ordonné."],
- ["UDP","Protocole de transport sans établissement de connexion préalable."],
+ ["AD DS","Service de domaine Windows pour gérer identités et ressources."],
+ ["CIDR","Notation indiquant la longueur du préfixe réseau, par exemple /24."],
+ ["DHCP","Protocole d'attribution automatique des paramètres réseau."],
+ ["DNS","Système de résolution des noms."],
+ ["Docker","Plateforme de création et d'exécution de conteneurs."],
+ ["GPO","Stratégie de groupe pour configurer utilisateurs et ordinateurs Windows."],
+ ["Hyperviseur","Logiciel ou couche gérant des machines virtuelles."],
+ ["IP","Protocole d'adressage et d'acheminement des paquets."],
+ ["LAN","Réseau local."],
+ ["NAT","Traduction d'adresses réseau."],
+ ["NTFS","Système de fichiers Windows prenant notamment en charge des permissions."],
+ ["Pare-feu","Mécanisme de filtrage des communications selon des règles."],
+ ["Passerelle","Équipement vers lequel un hôte envoie le trafic destiné à d'autres réseaux."],
+ ["RPO","Perte de données maximale admissible exprimée en temps."],
+ ["RTO","Durée cible pour rétablir un service après une interruption."],
+ ["SSH","Protocole chiffré utilisé notamment pour l'administration distante."],
+ ["TCP","Protocole de transport fiable et ordonné."],
+ ["UDP","Protocole de transport sans établissement préalable de connexion."],
  ["VLAN","Segmentation logique d'un réseau local."],
- ["VPN","Technologie permettant d'établir un tunnel réseau, souvent chiffré."]
+ ["VPN","Technologie de tunnel réseau, souvent chiffré."]
+];
+
+const examQuestions = [
+ {q:"Un poste reçoit une adresse IP mais ne résout aucun nom. Que vérifies-tu en premier ?",a:["Le DNS configuré et les résultats de nslookup","Le clavier","La taille de l'écran"],c:0},
+ {q:"Quel mécanisme permet de limiter les accès à un partage de fichiers ?",a:["Donner tous les droits à tout le monde","Utiliser des groupes et des permissions adaptées","Désactiver l'authentification"],c:1},
+ {q:"Un service Docker ne répond pas. Quel contrôle est pertinent ?",a:["Vérifier les journaux, les ports et l'état du service","Supprimer immédiatement tous les volumes","Désactiver le pare-feu sans diagnostic"],c:0},
+ {q:"Pourquoi conserver une sauvegarde indépendante ?",a:["Pour éviter toute documentation","Pour réduire le risque qu'un incident affecte à la fois les données et leurs copies","Pour remplacer les mises à jour"],c:1},
+ {q:"Que doit contenir une bonne documentation réseau ?",a:["Uniquement les mots de passe","Un plan d'adressage, les rôles, les dépendances et les procédures","Aucune date de modification"],c:1}
 ];
 
 const defaultState = {
-  completed:[],
-  score:0,
-  theme:"dark"
+ version:2,completed:[],doneExercises:[],score:0,history:[],
+ theme:"dark",activity:[]
 };
 let state = loadState();
-let currentCourse = null;
-let questionIndex = 0;
-let answered = false;
-let quizQuestions = [...questions];
+let activeModule = null;
+let quizRun = [];
+let quizIndex = 0;
+let quizCorrect = 0;
+let quizAnswered = false;
+let examRun = [];
 
-function loadState() {
-  try {
-    const s = JSON.parse(localStorage.getItem("cyberlab-academy-v1"));
-    if(s && Array.isArray(s.completed) && Number.isFinite(s.score)
-      && ["light","dark"].includes(s.theme)) return s;
-  } catch(e) {}
-  return {...defaultState,completed:[]};
+function loadState(){
+ try{
+  const s=JSON.parse(localStorage.getItem("cyberlab-v2"));
+  if(s && s.version===2 && Array.isArray(s.completed)
+    && Array.isArray(s.doneExercises) && Array.isArray(s.history)
+    && Array.isArray(s.activity) && Number.isFinite(s.score)
+    && ["dark","light"].includes(s.theme)) return s;
+ }catch(e){}
+ return {...defaultState,completed:[],doneExercises:[],history:[],activity:[]};
 }
-function saveState() {
-  try {
-    localStorage.setItem("cyberlab-academy-v1",JSON.stringify(state));
-  } catch(e) {
-    console.warn("Sauvegarde locale indisponible.");
-  }
+function save(){
+ try{localStorage.setItem("cyberlab-v2",JSON.stringify(state));}
+ catch(e){$("backupMessage").textContent="Stockage indisponible. Exporte une sauvegarde si possible.";}
 }
-function esc(v) {
-  return String(v ?? "").replace(/[&<>"']/g,c=>({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
+function allLessons(){
+ return modules.flatMap(m=>m.lessons.map((l,i)=>({...l,id:m.id+"-"+i,module:m})));
 }
-function courseLessons() {
-  return courses.flatMap(c=>c.lessons.map((l,i)=>({
-    id:c.id+"-"+i,
-    course:c,
-    title:l[0],
-    desc:l[1]
-  })));
+function logActivity(text){
+ state.activity.unshift({text,date:new Date().toLocaleString("fr-FR")});
+ state.activity=state.activity.slice(0,12);
 }
-function stats() {
-  const all = courseLessons();
-  const done = all.filter(l=>state.completed.includes(l.id)).length;
-  $("courseCount").textContent = courses.length;
-  $("lessonCount").textContent = done;
-  $("progressCount").textContent = Math.round(done/all.length*100)+"%";
-  $("scoreCount").textContent = state.score;
-  $("mainProgress").style.width = done/all.length*100+"%";
-  $("progressLabel").textContent = done+" / "+all.length+" leçons validées";
+function progressFor(m){
+ return m.lessons.filter((l,i)=>state.completed.includes(m.id+"-"+i)).length;
 }
-function cardHTML(c) {
-  const done = c.lessons.filter((l,i)=>state.completed.includes(c.id+"-"+i)).length;
-  return `<article class="card">
-    <div class="card-icon">${c.icon}</div>
-    <span class="badge">${esc(c.level)}</span>
-    <h3 style="margin-top:12px">${esc(c.title)}</h3>
-    <p>${esc(c.desc)}</p>
-    <div class="progress"><div style="width:${done/c.lessons.length*100}%"></div></div>
-    <div class="card-bottom">
-      <span class="note">${done}/${c.lessons.length} leçons</span>
-      <button class="btn primary" data-course="${c.id}">Explorer →</button>
-    </div>
+function stats(){
+ const all=allLessons();
+ const done=all.filter(l=>state.completed.includes(l.id)).length;
+ $("sCourses").textContent=modules.length;
+ $("sLessons").textContent=done;
+ $("sProgress").textContent=Math.round(done/all.length*100)+"%";
+ $("sScore").textContent=state.score;
+ $("globalBar").style.width=done/all.length*100+"%";
+ $("progressText").textContent=done+"/"+all.length+" leçons";
+ $("themeLabel").textContent=state.theme==="light"?"Clair":"Sombre";
+}
+function cardHTML(m){
+ const done=progressFor(m);
+ return `<article class="card">
+  <div class="icon">${m.icon}</div><span class="badge">${m.level}</span>
+  <div class="course-title">${escapeHTML(m.title)}</div>
+  <p class="course-desc">${escapeHTML(m.desc)}</p>
+  <div class="progress"><div style="width:${done/m.lessons.length*100}%"></div></div>
+  <div class="row"><span class="tag">${done}/${m.lessons.length} leçons</span>
+  <button class="btn primary" data-open-course="${m.id}">Ouvrir →</button></div>
+ </article>`;
+}
+function renderDashboard(){
+ $("featured").innerHTML=modules.slice(0,3).map(cardHTML).join("");
+ $("recentActivity").innerHTML=state.activity.length
+ ?state.activity.map(a=>`<div class="lesson"><div class="grow"><strong>${escapeHTML(a.text)}</strong><p>${escapeHTML(a.date)}</p></div></div>`).join("")
+ :'<p class="muted">Tes activités récentes apparaîtront ici.</p>';
+}
+function renderCourses(query=""){
+ const q=query.toLowerCase().trim();
+ const list=modules.filter(m=>(m.title+" "+m.desc+" "+m.lessons.map(l=>l.title+" "+l.body).join(" ")).toLowerCase().includes(q));
+ $("courseGrid").innerHTML=list.map(cardHTML).join("");
+ $("courseEmpty").hidden=list.length>0;
+ $("courseDetail").hidden=true;
+ $("courseGrid").hidden=false;
+}
+function openCourse(id){
+ const m=modules.find(x=>x.id===id);
+ if(!m)return;
+ activeModule=id;
+ $("courseGrid").hidden=true;
+ $("courseEmpty").hidden=true;
+ $("courseDetail").hidden=false;
+ $("courseDetail").innerHTML=`
+  <div class="card">
+   <button class="btn" data-back-courses>← Catalogue</button>
+   <div class="icon" style="margin-top:18px">${m.icon}</div>
+   <span class="badge">${m.level}</span>
+   <h2 style="margin-top:10px">${escapeHTML(m.title)}</h2>
+   <p>${escapeHTML(m.desc)}</p>
+   <div class="callout">Lis chaque fiche puis valide la leçon une fois les notions comprises.</div>
+  </div>
+  ${m.lessons.map((l,i)=>{
+   const id=m.id+"-"+i,checked=state.completed.includes(id);
+   return `<article class="card">
+    <div class="row"><h2>${i+1}. ${escapeHTML(l.title)}</h2><span class="badge">${checked?"Validée":"À étudier"}</span></div>
+    <p>${escapeHTML(l.body)}</p>
+    <h3>Objectifs</h3><ul>${l.points.map(p=>`<li>${escapeHTML(p)}</li>`).join("")}</ul>
+    ${m.id==="network"&&i===1?'<div class="code">Exemple : 192.168.10.0/24\nMasque : 255.255.255.0\nAdresses utilisables : 192.168.10.1 à 192.168.10.254\nBroadcast : 192.168.10.255</div>':""}
+    ${m.id==="linux"&&i===0?'<div class="code">pwd\nls -la\ncd /var/log\njournalctl --since today</div>':""}
+    ${m.id==="docker"&&i===3?'<div class="code">docker ps\ndocker logs nom-du-conteneur\ndocker compose config</div>':""}
+    <label class="lesson"><input type="checkbox" data-complete-lesson="${id}" ${checked?"checked":""}>
+    <span>J'ai étudié et compris cette leçon.</span></label>
+   </article>`;
+  }).join("")}`;
+ showPage("courses",false);
+ $("courseDetail").hidden=false;
+ $("courseGrid").hidden=true;
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function renderExercises(){
+ const filter=$("exerciseFilter").value;
+ const status=$("exerciseStatus").value;
+ const list=exercises.filter(e=>(filter==="all"||e.module===filter)
+  &&(status==="all"||(status==="done"?state.doneExercises.includes(e.id):!state.doneExercises.includes(e.id))));
+ $("exerciseList").innerHTML=list.length?list.map(e=>{
+  const done=state.doneExercises.includes(e.id);
+  const m=modules.find(x=>x.id===e.module);
+  return `<article class="exercise">
+   <div class="row"><span class="badge">${escapeHTML(m.title)}</span><span class="tag">${done?"Terminé":"À réaliser"}</span></div>
+   <h3 style="margin-top:12px">${escapeHTML(e.title)}</h3>
+   <p>${escapeHTML(e.scenario)}</p>
+   <strong>Travail demandé</strong><p>${escapeHTML(e.question)}</p>
+   <textarea class="field" id="answer-${e.id}" placeholder="Rédige ta réponse...">${escapeHTML(state["answer_"+e.id]||"")}</textarea>
+   <div class="actions" style="margin-top:10px">
+    <button class="btn" data-save-answer="${e.id}">Enregistrer ma réponse</button>
+    <button class="btn" data-show-correction="${e.id}">Voir la correction</button>
+    <button class="btn primary" data-finish-exercise="${e.id}">${done?"Marquer à refaire":"Valider l'exercice"}</button>
+   </div>
+   <div id="correction-${e.id}" class="callout" hidden>${escapeHTML(e.correction)}</div>
+   <div id="message-${e.id}" class="feedback" aria-live="polite"></div>
   </article>`;
+ }).join(""):'<div class="card">Aucun exercice pour ce filtre.</div>';
 }
-function renderCatalog(query="") {
-  const q=query.trim().toLowerCase();
-  const filtered=courses.filter(c=>
-    (c.title+" "+c.desc+" "+c.lessons.flat().join(" ")).toLowerCase().includes(q)
-  );
-  $("courseCatalog").innerHTML=filtered.map(cardHTML).join("");
-  $("noResults").hidden=filtered.length>0;
+function startQuiz(){
+ const category=$("quizCategory").value;
+ const pool=questions.filter(q=>category==="all"||q.m===category);
+ quizRun=pool.slice().sort(()=>Math.random()-.5).slice(0,Math.min(5,pool.length));
+ quizIndex=0;quizCorrect=0;quizAnswered=false;
+ $("quizPanel").hidden=false;
+ showPage("quiz");
+ renderQuestion();
 }
-function renderCourse(id) {
-  const c=courses.find(x=>x.id===id);
-  if(!c) return;
-  currentCourse=id;
-  const lessons=c.lessons.map((l,i)=>{
-    const lid=c.id+"-"+i;
-    const checked=state.completed.includes(lid);
-    return `<div class="lesson">
-      <input type="checkbox" data-lesson="${lid}" ${checked?"checked":""}
-        aria-label="Valider ${esc(l[0])}">
-      <div><strong>${esc(l[0])}</strong><p>${esc(l[1])}</p></div>
-      <span class="badge">${checked?"Validée":"À étudier"}</span>
-    </div>`;
-  }).join("");
-  $("courseDetail").innerHTML=`
-    <div class="card">
-      <div class="card-icon">${c.icon}</div>
-      <span class="badge">${esc(c.level)}</span>
-      <h2 style="margin-top:12px">${esc(c.title)}</h2>
-      <p>${esc(c.desc)}</p>
-      ${c.content}
-    </div>
-    <div class="card" style="margin-top:15px">
-      <h2>Parcours de leçons</h2>
-      <p>Coche une leçon lorsque tu l'as étudiée.</p>
-      <div class="lesson-list">${lessons}</div>
-    </div>`;
-  showPage("course");
+function renderQuestion(){
+ if(quizIndex>=quizRun.length){finishQuiz();return;}
+ quizAnswered=false;
+ const q=quizRun[quizIndex];
+ $("quizCounter").textContent=`Question ${quizIndex+1}/${quizRun.length}`;
+ $("quizLiveScore").textContent=`Bonnes réponses : ${quizCorrect}`;
+ $("questionText").textContent=q.q;
+ $("answerFeedback").textContent="";
+ $("nextQuestion").hidden=true;
+ $("answerOptions").innerHTML=q.a.map((a,i)=>`<button class="option" data-answer="${i}">${escapeHTML(a)}</button>`).join("");
 }
-function renderLessons() {
-  const lessons=courseLessons();
-  $("lessonList").innerHTML=lessons.map(l=>{
-    const done=state.completed.includes(l.id);
-    return `<div class="lesson">
-      <input type="checkbox" data-lesson="${l.id}" ${done?"checked":""}>
-      <div><strong>${esc(l.title)}</strong><p>${esc(l.course.title)} · ${esc(l.desc)}</p></div>
-      <button class="btn" data-course="${l.course.id}">Cours</button>
-    </div>`;
-  }).join("");
+function answer(i){
+ if(quizAnswered||!quizRun[quizIndex])return;
+ quizAnswered=true;
+ const q=quizRun[quizIndex];
+ const correct=i===q.c;
+ if(correct){quizCorrect++;state.score++;save();stats();}
+ document.querySelectorAll("[data-answer]").forEach(b=>{
+  b.disabled=true;
+  const n=Number(b.dataset.answer);
+  if(n===q.c)b.classList.add("correct");
+  else if(n===i)b.classList.add("wrong");
+ });
+ $("answerFeedback").className="feedback "+(correct?"good":"bad");
+ $("answerFeedback").textContent=(correct?"Bonne réponse. ":"Réponse incorrecte. ")+q.x;
+ $("nextQuestion").hidden=false;
+ $("nextQuestion").textContent=quizIndex===quizRun.length-1?"Terminer le quiz":"Question suivante →";
 }
-function renderDashboard() {
-  $("featuredCourses").innerHTML=courses.slice(0,3).map(cardHTML).join("");
+function finishQuiz(){
+ const record={date:new Date().toLocaleString("fr-FR"),correct:quizCorrect,total:quizRun.length};
+ state.history.unshift(record);state.history=state.history.slice(0,30);
+ logActivity("Quiz terminé : "+quizCorrect+"/"+quizRun.length);
+ save();stats();renderHistory();
+ $("quizCounter").textContent="Résultat";
+ $("quizLiveScore").textContent="";
+ $("questionText").textContent=`Résultat : ${quizCorrect}/${quizRun.length}`;
+ $("answerOptions").innerHTML="";
+ $("answerFeedback").className="feedback";
+ $("answerFeedback").textContent="Consulte les corrections des questions précédentes et révise les notions moins bien maîtrisées.";
+ $("nextQuestion").hidden=true;
 }
-function showPage(id) {
-  const section=$(id);
-  if(!section) return;
-  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
-  section.classList.add("active");
-  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
-  const titles={
-    dashboard:"Tableau de bord",catalog:"Catalogue des cours",
-    course:"Fiche de cours",lessons:"Mes leçons",quiz:"Quiz informatique",
-    terminal:"Terminal simulé",glossary:"Glossaire réseau",about:"À propos"
-  };
-  $("pageTitle").textContent=titles[id]||"CyberLab Academy";
-  $("searchInput").value="";
-  $("searchInput").placeholder="Rechercher un cours, une notion, un protocole...";
-  if(id==="catalog") renderCatalog();
-  if(id==="lessons") renderLessons();
-  if(id==="glossary") renderGlossary();
-  if(id==="quiz" && !$("quizArea").dataset.started) startQuiz();
-  window.scrollTo({top:0,behavior:"smooth"});
+function renderHistory(){
+ const html=state.history.length?state.history.map(h=>`<div class="lesson"><div class="grow"><strong>${h.correct}/${h.total} bonnes réponses</strong><p>${escapeHTML(h.date)}</p></div></div>`).join(""):'<p class="muted">Aucun quiz effectué.</p>';
+ $("quizHistory").innerHTML=html;
+ $("progressHistory").innerHTML=html;
 }
-function renderGlossary() {
-  const q=$("glossarySearch").value.trim().toLowerCase();
-  const items=glossary.filter(x=>(x[0]+" "+x[1]).toLowerCase().includes(q));
-  $("glossaryList").innerHTML=items.length ? items.map(x=>`
-    <div style="padding:12px 0;border-bottom:1px solid var(--border)">
-      <strong>${esc(x[0])}</strong><p class="note">${esc(x[1])}</p>
-    </div>`).join("") : `<div class="empty">Aucun résultat.</div>`;
+function startExam(){
+ examRun=examQuestions.map((q,i)=>({...q,id:"exam-"+i}));
+ $("examPanel").hidden=false;
+ $("examResult").innerHTML="";
+ $("examCounter").textContent=examRun.length+" questions";
+ $("examQuestions").innerHTML=examRun.map((q,i)=>`
+  <div class="exercise">
+   <strong>${i+1}. ${escapeHTML(q.q)}</strong>
+   <div class="options">${q.a.map((a,j)=>`<label class="option" style="display:block">
+    <input type="radio" name="${q.id}" value="${j}"> ${escapeHTML(a)}
+   </label>`).join("")}</div>
+   <div id="examFeedback-${q.id}" class="feedback"></div>
+  </div>`).join("");
+ $("submitExam").disabled=false;
 }
-function startQuiz() {
-  quizQuestions=[...questions].sort(()=>Math.random()-.5);
-  questionIndex=0;
-  answered=false;
-  $("quizArea").dataset.started="yes";
-  renderQuestion();
+function submitExam(){
+ let score=0;
+ examRun.forEach((q,i)=>{
+  const selected=document.querySelector(`input[name="${q.id}"]:checked`);
+  const feedback=$("examFeedback-"+q.id);
+  const correct=selected&&Number(selected.value)===q.c;
+  if(correct)score++;
+  feedback.className="feedback "+(correct?"good":"bad");
+  feedback.textContent=(correct?"Correct. ":"À revoir. ")+q.a[q.c];
+ });
+ $("examResult").innerHTML=`<div class="callout"><h2>Résultat : ${score}/${examRun.length}</h2><p>Utilise les réponses incorrectes pour revoir les notions concernées.</p></div>`;
+ $("submitExam").disabled=true;
+ logActivity("Épreuve blanche terminée : "+score+"/"+examRun.length);
+ save();renderDashboard();
 }
-function renderQuestion() {
-  answered=false;
-  const q=quizQuestions[questionIndex];
-  $("quizCounter").textContent=`Question ${questionIndex+1} / ${quizQuestions.length}`;
-  $("quizFeedback").textContent="";
-  $("nextQuestion").hidden=true;
-  $("quizArea").innerHTML=`
-    <div class="quiz-question">${esc(q.q)}</div>
-    ${q.a.map((a,i)=>`<button class="answer" data-answer="${i}">${esc(a)}</button>`).join("")}`;
+function renderGlossary(){
+ const q=$("glossarySearch").value.toLowerCase().trim();
+ const items=glossary.filter(x=>(x[0]+" "+x[1]).toLowerCase().includes(q));
+ $("glossaryList").innerHTML=items.length?items.map(x=>`<div class="definition"><strong>${escapeHTML(x[0])}</strong><p>${escapeHTML(x[1])}</p></div>`).join(""):'<p class="muted">Aucune définition trouvée.</p>';
 }
-function answerQuestion(i) {
-  if(answered) return;
-  answered=true;
-  const q=quizQuestions[questionIndex];
-  document.querySelectorAll("[data-answer]").forEach(b=>{
-    const n=Number(b.dataset.answer);
-    b.disabled=true;
-    if(n===q.correct) b.classList.add("correct");
-    else if(n===i) b.classList.add("wrong");
-  });
-  if(i===q.correct) {
-    state.score++;
-    saveState();
-    stats();
-    $("quizFeedback").textContent="Bonne réponse ! "+q.ex;
-  } else {
-    $("quizFeedback").textContent="Pas tout à fait. "+q.ex;
-  }
-  $("nextQuestion").hidden=false;
-  $("nextQuestion").textContent=questionIndex===quizQuestions.length-1
-    ?"Voir le résultat →":"Question suivante →";
+function renderProgress(){
+ $("moduleProgress").innerHTML=modules.map(m=>{
+  const done=progressFor(m),pct=Math.round(done/m.lessons.length*100);
+  return `<div class="card"><div class="row"><strong>${escapeHTML(m.title)}</strong><span>${pct}%</span></div><div class="progress"><div style="width:${pct}%"></div></div><p class="muted">${done}/${m.lessons.length} leçons validées</p></div>`;
+ }).join("");
 }
-function finishQuiz() {
-  $("quizCounter").textContent="Quiz terminé";
-  $("quizArea").innerHTML=`<h2>Bravo pour ta participation !</h2>
-    <p>Tu as répondu aux ${quizQuestions.length} questions.</p>
-    <p>Le compteur global indique ${state.score} bonnes réponses cumulées.</p>`;
-  $("quizFeedback").textContent="Recommence pour t'entraîner sur un nouvel ordre de questions.";
-  $("nextQuestion").hidden=true;
+function showPage(id,scroll=true){
+ const s=$(id);if(!s)return;
+ document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));
+ s.classList.add("active");
+ document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ const names={dashboard:"Tableau de bord",courses:"Cours techniques",exercises:"Travaux pratiques",quiz:"Quiz & révisions",exam:"Examens blancs",glossary:"Glossaire",progress:"Ma progression",settings:"Sauvegardes"};
+ $("pageTitle").textContent=names[id]||"CyberLab Academy";
+ if(id==="courses"&&!activeModule)renderCourses();
+ if(id==="exercises")renderExercises();
+ if(id==="glossary")renderGlossary();
+ if(id==="progress"){renderProgress();renderHistory();}
+ if(id==="quiz")renderHistory();
+ if(scroll)window.scrollTo({top:0,behavior:"smooth"});
 }
-function searchSite() {
-  const q=$("searchInput").value.trim().toLowerCase();
-  if(!q) {showPage("catalog");return;}
-  const matchingCourse=courses.find(c=>
-    (c.title+" "+c.desc+" "+c.lessons.flat().join(" ")+" "+c.content.replace(/<[^>]*>/g," ")).toLowerCase().includes(q)
-  );
-  const matchingGlossary=glossary.some(x=>(x[0]+" "+x[1]).toLowerCase().includes(q));
-  if(matchingCourse) {
-    renderCourse(matchingCourse.id);
-  } else if(matchingGlossary) {
-    showPage("glossary");
-    $("glossarySearch").value=q;
-    renderGlossary();
-  } else {
-    showPage("catalog");
-    $("searchInput").value=q;
-    renderCatalog(q);
-  }
+function exportBackup(){
+ const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const a=document.createElement("a");
+ a.href=url;a.download="cyberlab-academy-backup.json";
+ a.click();URL.revokeObjectURL(url);
+ $("backupMessage").textContent="Export demandé. Conserve le fichier dans un emplacement sûr.";
 }
-function terminalRun(command) {
-  const output=$("terminalOutput");
-  const cmd=command.trim();
-  const c=cmd.toLowerCase();
-  const responses={
-    "help":"Commandes disponibles : help, pwd, ls, whoami, date, ip, clear, about",
-    "pwd":"/home/etudiant",
-    "ls":"Documents  Téléchargements  cours.txt",
-    "whoami":"etudiant",
-    "ip":"Interface simulée : eth0\nAdresse de démonstration : 192.168.1.20/24",
-    "about":"Terminal pédagogique CyberLab. Aucune commande réelle n'est exécutée."
-  };
-  let result;
-  if(!cmd) return;
-  if(c==="clear") {output.textContent="Terminal effacé. Tape help pour continuer.";return;}
-  if(c==="date") result=new Date().toLocaleString("fr-FR");
-  else if(Object.prototype.hasOwnProperty.call(responses,c)) result=responses[c];
-  else result="Commande non reconnue par la simulation. Tape help pour voir les commandes disponibles.";
-  output.textContent+="\n\nstudent@cyberlab:~$ "+cmd+"\n"+result;
-  output.scrollTop=output.scrollHeight;
+function importBackup(file){
+ if(!file)return;
+ const reader=new FileReader();
+ reader.onload=()=>{
+  try{
+   const s=JSON.parse(reader.result);
+   if(!s||s.version!==2||!Array.isArray(s.completed)
+    ||!Array.isArray(s.doneExercises)||!Array.isArray(s.history)
+    ||!Array.isArray(s.activity)||!Number.isFinite(s.score)
+    ||!["dark","light"].includes(s.theme)
+    ||!s.completed.every(x=>allLessons().some(l=>l.id===x))
+    ||!s.doneExercises.every(x=>exercises.some(e=>e.id===x))
+    ||!s.history.every(h=>Number.isFinite(h.correct)&&Number.isFinite(h.total))
+    ||s.score<0||s.score>100000
+    ||s.completed.length>allLessons().length
+    ||s.doneExercises.length>exercises.length
+    ||s.history.length>30||s.activity.length>12)
+     throw new Error("Format de sauvegarde invalide.");
+   const next={...defaultState,...s};
+   for(const e of exercises){
+    const a=s["answer_"+e.id];
+    if(typeof a==="string")next["answer_"+e.id]=a.slice(0,10000);
+   }
+   state=next;save();
+   document.body.classList.toggle("light",state.theme==="light");
+   stats();renderDashboard();renderCourses();renderExercises();renderGlossary();renderHistory();
+   $("backupMessage").textContent="Sauvegarde importée avec succès.";
+  }catch(e){$("backupMessage").textContent="Import impossible : fichier invalide ou incompatible.";}
+ };
+ reader.readAsText(file);
 }
+
 document.addEventListener("click",e=>{
-  const b=e.target.closest("button");
-  if(!b) return;
-  if(b.dataset.page) showPage(b.dataset.page);
-  if(b.dataset.go) showPage(b.dataset.go);
-  if(b.dataset.course) renderCourse(b.dataset.course);
-  if(b.dataset.answer!==undefined) answerQuestion(Number(b.dataset.answer));
+ const b=e.target.closest("button");if(!b)return;
+ if(b.dataset.page)showPage(b.dataset.page);
+ if(b.dataset.openCourse)openCourse(b.dataset.openCourse);
+ if(b.hasAttribute("data-back-courses")){
+  activeModule=null;renderCourses();showPage("courses");
+ }
+ if(b.dataset.answer!==undefined)answer(Number(b.dataset.answer));
+ if(b.dataset.saveAnswer){
+  const id=b.dataset.saveAnswer;
+  state["answer_"+id]=$("answer-"+id).value.slice(0,10000);
+  save();
+  $("message-"+id).textContent="Réponse enregistrée localement.";
+ }
+ if(b.dataset.showCorrection){
+  const box=$("correction-"+b.dataset.showCorrection);
+  box.hidden=!box.hidden;
+ }
+ if(b.dataset.finishExercise){
+  const id=b.dataset.finishExercise;
+  if(state.doneExercises.includes(id))state.doneExercises=state.doneExercises.filter(x=>x!==id);
+  else{
+   state.doneExercises.push(id);
+   logActivity("Exercice validé : "+exercises.find(x=>x.id===id).title);
+  }
+  save();renderExercises();renderDashboard();
+ }
 });
 document.addEventListener("change",e=>{
-  const el=e.target;
-  if(!el.matches("[data-lesson]")) return;
-  const id=el.dataset.lesson;
-  if(el.checked && !state.completed.includes(id)) state.completed.push(id);
-  if(!el.checked) state.completed=state.completed.filter(x=>x!==id);
-  saveState();
-  stats();
-  renderDashboard();
-  if(currentCourse) renderCourse(currentCourse);
-  else if($("lessons").classList.contains("active")) renderLessons();
+ const el=e.target;
+ if(!el.matches("[data-complete-lesson]"))return;
+ const id=el.dataset.completeLesson;
+ if(el.checked&&!state.completed.includes(id)){
+  state.completed.push(id);
+  logActivity("Leçon validée : "+allLessons().find(x=>x.id===id).title);
+ }else if(!el.checked)state.completed=state.completed.filter(x=>x!==id);
+ save();stats();renderDashboard();renderProgress();
+ const detail=$("courseDetail");
+ if(!detail.hidden)openCourse(activeModule);
 });
-$("searchButton").addEventListener("click",searchSite);
-$("searchInput").addEventListener("keydown",e=>{if(e.key==="Enter")searchSite();});
+$("searchBtn").addEventListener("click",()=>{
+ const q=$("globalSearch").value.trim();
+ activeModule=null;showPage("courses");renderCourses(q);
+});
+$("globalSearch").addEventListener("keydown",e=>{if(e.key==="Enter")$("searchBtn").click();});
+$("exerciseFilter").addEventListener("change",renderExercises);
+$("exerciseStatus").addEventListener("change",renderExercises);
 $("glossarySearch").addEventListener("input",renderGlossary);
-$("continueButton").addEventListener("click",()=>{
-  const next=courseLessons().find(l=>!state.completed.includes(l.id));
-  if(next) renderCourse(next.course.id);
-  else showPage("catalog");
-});
-$("themeButton").addEventListener("click",()=>{
-  state.theme=state.theme==="dark"?"light":"dark";
-  document.body.classList.toggle("light",state.theme==="light");
-  saveState();
-});
+$("startQuiz").addEventListener("click",startQuiz);
 $("nextQuestion").addEventListener("click",()=>{
-  if(!answered) return;
-  if(questionIndex<quizQuestions.length-1) {
-    questionIndex++;
-    renderQuestion();
-  } else finishQuiz();
+ if(!quizAnswered)return;
+ quizIndex++;
+ if(quizIndex<quizRun.length)renderQuestion();
+ else finishQuiz();
 });
-$("restartQuiz").addEventListener("click",startQuiz);
-$("terminalForm").addEventListener("submit",e=>{
-  e.preventDefault();
-  terminalRun($("terminalInput").value);
-  $("terminalInput").value="";
+$("startExam").addEventListener("click",startExam);
+$("submitExam").addEventListener("click",submitExam);
+$("themeBtn").addEventListener("click",toggleTheme);
+$("settingsTheme").addEventListener("click",toggleTheme);
+function toggleTheme(){
+ state.theme=state.theme==="dark"?"light":"dark";
+ document.body.classList.toggle("light",state.theme==="light");
+ save();stats();
+}
+$("exportBtn").addEventListener("click",exportBackup);
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+ const f=e.target.files[0];if(f)importBackup(f);e.target.value="";
 });
-$("resetButton").addEventListener("click",()=>{
-  if(!confirm("Effacer la progression et le score enregistrés dans ce navigateur ?")) return;
-  state={...defaultState,completed:[]};
-  saveState();
-  document.body.classList.remove("light");
-  stats();renderDashboard();renderCatalog();renderLessons();
-  alert("La progression locale a été réinitialisée.");
+$("resetBtn").addEventListener("click",()=>{
+ if(!confirm("Effacer la progression, les exercices et l'historique des quiz ? Exporte d'abord une sauvegarde si tu souhaites conserver tes données."))return;
+ state={...defaultState,completed:[],doneExercises:[],history:[],activity:[]};
+ save();stats();renderDashboard();renderCourses();renderExercises();renderProgress();renderHistory();
+ $("backupMessage").textContent="Progression réinitialisée.";
 });
+$("dateLabel").textContent=new Date().toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 document.body.classList.toggle("light",state.theme==="light");
-$("dateText").textContent=new Date().toLocaleDateString("fr-FR",{
-  weekday:"long",day:"numeric",month:"long",year:"numeric"
-});
-stats();
-renderDashboard();
-renderCatalog();
-renderGlossary();
+stats();renderDashboard();renderCourses();renderExercises();renderGlossary();renderHistory();
 </script>
 </body>
 </html>
