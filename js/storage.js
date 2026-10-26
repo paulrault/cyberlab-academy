@@ -1,140 +1,178 @@
 
-(() => {
-  "use strict";
+"use strict";
 
-  const KEY = "cyberlab-academy-v3";
-
-  const defaults = {
+window.CyberStorage = (() => {
+  const KEY = "cyberlab-academy-v4";
+  const DEFAULTS = {
+    version: 4,
     xp: 0,
+    completedLessons: [],
     completedMissions: [],
     quizHistory: [],
-    quizBest: 0,
-    theme: "dark"
+    journal: [],
+    settings: { theme: "dark" },
+    lastVisit: null
   };
 
-  let state = { ...defaults };
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
 
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (!raw) return;
-      const data = JSON.parse(raw);
+      if (!raw) return clone(DEFAULTS);
 
-      state = {
-        ...defaults,
-        xp: Number.isFinite(data.xp) && data.xp >= 0 ? data.xp : 0,
-        completedMissions: Array.isArray(data.completedMissions)
-          ? [...new Set(data.completedMissions.filter(x => typeof x === "string"))]
-          : [],
-        quizHistory: Array.isArray(data.quizHistory)
-          ? data.quizHistory.filter(x =>
-              x && Number.isFinite(x.score) &&
-              Number.isFinite(x.total) &&
-              typeof x.date === "string"
-            ).slice(0, 20)
-          : [],
-        quizBest: Number.isFinite(data.quizBest) ? data.quizBest : 0,
-        theme: data.theme === "light" ? "light" : "dark"
+      const parsed = JSON.parse(raw);
+      return {
+        ...clone(DEFAULTS),
+        ...parsed,
+        settings: { ...DEFAULTS.settings, ...(parsed.settings || {}) },
+        completedLessons: Array.isArray(parsed.completedLessons) ? parsed.completedLessons : [],
+        completedMissions: Array.isArray(parsed.completedMissions) ? parsed.completedMissions : [],
+        quizHistory: Array.isArray(parsed.quizHistory) ? parsed.quizHistory : [],
+        journal: Array.isArray(parsed.journal) ? parsed.journal : []
       };
     } catch (error) {
-      console.warn("La sauvegarde locale n'a pas pu être lue.", error);
-      state = { ...defaults };
+      console.error("Chargement des données impossible :", error);
+      return clone(DEFAULTS);
     }
   }
+
+  let state = load();
 
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify(state));
       return true;
     } catch (error) {
-      console.warn("La sauvegarde locale a échoué.", error);
+      console.error("Sauvegarde impossible :", error);
       return false;
     }
   }
 
-  function addXP(amount) {
-    if (!Number.isFinite(amount) || amount <= 0) return;
-    state.xp += amount;
-    save();
+  function get() {
+    return clone(state);
   }
 
-  function completeMission(id) {
-    if (state.completedMissions.includes(id)) return false;
-    state.completedMissions.push(id);
-    addXP(50);
-    save();
+  function addXP(amount, reason) {
+    const value = Math.max(0, Math.floor(Number(amount) || 0));
+    if (!value) return false;
+
+    state.xp += value;
+    addJournal("XP", `+${value} XP — ${reason || "Progression"}`);
+    return save();
+  }
+
+  function level() {
+    return Math.floor(state.xp / 250) + 1;
+  }
+
+  function levelProgress() {
+    return state.xp % 250;
+  }
+
+  function completeLesson(id, title) {
+    if (state.completedLessons.includes(id)) return false;
+    state.completedLessons.push(id);
+    addXP(25, `Cours terminé : ${title}`);
     return true;
   }
 
-  function addQuizResult(score, total) {
-    const result = {
+  function completeMission(id, title, xp) {
+    if (state.completedMissions.includes(id)) return false;
+    state.completedMissions.push(id);
+    addXP(xp || 50, `Mission réussie : ${title}`);
+    return true;
+  }
+
+  function addQuiz(score, total, title) {
+    state.quizHistory.unshift({
+      id: Date.now(),
+      date: new Date().toISOString(),
       score,
       total,
-      date: new Date().toLocaleString("fr-FR")
-    };
+      title
+    });
+    state.quizHistory = state.quizHistory.slice(0, 100);
+    save();
+  }
 
-    state.quizHistory.unshift(result);
-    state.quizHistory = state.quizHistory.slice(0, 20);
-
-    const percent = total > 0 ? Math.round(score / total * 100) : 0;
-    state.quizBest = Math.max(state.quizBest, percent);
-
-    addXP(score * 10);
+  function addJournal(type, description) {
+    state.journal.unshift({
+      id: Date.now() + Math.random(),
+      date: new Date().toISOString(),
+      type,
+      description
+    });
+    state.journal = state.journal.slice(0, 200);
     save();
   }
 
   function setTheme(theme) {
-    state.theme = theme === "light" ? "light" : "dark";
+    state.settings.theme = theme === "light" ? "light" : "dark";
     save();
   }
 
-  function exportData() {
-    return JSON.stringify({
-      version: 3,
-      exportedAt: new Date().toISOString(),
-      data: state
-    }, null, 2);
+  function exportJSON() {
+    const blob = new Blob([JSON.stringify(state, null, 2)], {
+      type: "application/json"
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "cyberlab-academy-sauvegarde.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
   }
 
-  function importData(text) {
-    const backup = JSON.parse(text);
+  function importJSON(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-    if (!backup || backup.version !== 3 || !backup.data) {
-      throw new Error("Ce fichier n'est pas une sauvegarde CyberLab V3.");
-    }
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(reader.result);
+          if (!parsed || typeof parsed !== "object" ||
+              !Number.isFinite(Number(parsed.xp)) ||
+              !Array.isArray(parsed.completedLessons) ||
+              !Array.isArray(parsed.completedMissions)) {
+            throw new Error("Format de sauvegarde invalide.");
+          }
 
-    const d = backup.data;
+          state = {
+            ...clone(DEFAULTS),
+            ...parsed,
+            xp: Math.max(0, Math.floor(Number(parsed.xp))),
+            settings: { ...DEFAULTS.settings, ...(parsed.settings || {}) },
+            completedLessons: parsed.completedLessons,
+            completedMissions: parsed.completedMissions,
+            quizHistory: Array.isArray(parsed.quizHistory) ? parsed.quizHistory : [],
+            journal: Array.isArray(parsed.journal) ? parsed.journal : []
+          };
 
-    if (!Number.isFinite(d.xp) || d.xp < 0 ||
-        !Array.isArray(d.completedMissions) ||
-        !Array.isArray(d.quizHistory) ||
-        !["light", "dark"].includes(d.theme)) {
-      throw new Error("Le contenu de la sauvegarde est invalide.");
-    }
+          if (!save()) throw new Error("Impossible d'enregistrer les données.");
+          resolve(true);
+        } catch (error) {
+          reject(error);
+        }
+      };
 
-    state = {
-      ...defaults,
-      xp: d.xp,
-      completedMissions: [...new Set(d.completedMissions.filter(x => typeof x === "string"))],
-      quizHistory: d.quizHistory.slice(0, 20),
-      quizBest: Number.isFinite(d.quizBest) ? d.quizBest : 0,
-      theme: d.theme
-    };
-
-    if (!save()) throw new Error("Impossible d'enregistrer la sauvegarde dans ce navigateur.");
+      reader.onerror = () => reject(new Error("Lecture du fichier impossible."));
+      reader.readAsText(file);
+    });
   }
 
-  window.CyberStorage = {
-    load,
-    save,
-    getState: () => state,
-    addXP,
-    completeMission,
-    addQuizResult,
-    setTheme,
-    exportData,
-    importData
+  function reset() {
+    state = clone(DEFAULTS);
+    return save();
+  }
+
+  return {
+    get, save, addXP, level, levelProgress, completeLesson,
+    completeMission, addQuiz, addJournal, setTheme,
+    exportJSON, importJSON, reset
   };
-
-  load();
 })();
