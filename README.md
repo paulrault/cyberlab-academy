@@ -1,66 +1,73 @@
 
-# CyberLab Academy V3
+# CyberLab Academy V4
 
-Plateforme pédagogique destinée à l'apprentissage des systèmes et réseaux, notamment pour le BTS SIO SISR.
+Plateforme pédagogique personnelle consacrée au BTS SIO SISR.
 
 ## Fonctionnalités
 
-- Tableau de bord et suivi de progression
-- Parcours Windows Server, réseaux, Linux, cybersécurité, Docker et virtualisation
-- Laboratoire réseau IPv4 simulé
-- Six missions pratiques avec corrections
-- Centre de supervision avec équipements et journaux fictifs
-- Quiz avec correction et historique des résultats
-- Thème sombre et thème clair
-- Export et import de la progression au format JSON
-- Stockage local dans le navigateur
+- Tableau de bord avec XP, niveaux et progression
+- Parcours de cours informatiques
+- Simulateur de sous-réseaux IPv4
+- Console pédagogique simulée
+- Missions avec indices et corrections
+- Quiz avec historique des résultats
+- Supervision fictive de serveurs
+- Glossaire informatique
+- Journal de révision
+- Thèmes clair et sombre
+- Export et import JSON de la progression
+- Interface responsive pour ordinateur, tablette et mobile
 
-## Arborescence
+## Structure
 
 ```text
-CyberLab-Academy-V3/
+CyberLab-Academy-V4/
 ├── index.html
 ├── README.md
 ├── css/
 │   └── style.css
 └── js/
     ├── storage.js
+    ├── data.js
     ├── lab.js
     ├── missions.js
     ├── supervision.js
     └── app.js
 ```
 
-## Tester en local
+## Lancer le site
 
-1. Créer les dossiers `css` et `js`.
-2. Placer chaque fichier au bon emplacement.
-3. Ouvrir `index.html` dans un navigateur.
-4. Tester les menus, les missions, le quiz et le laboratoire réseau.
+Ouvre `index.html` dans un navigateur récent.
 
-Pour un environnement de développement plus proche d'un serveur web, utiliser l'extension Live Server de Visual Studio Code.
+Pour un fonctionnement plus proche de la publication, tu peux également utiliser un serveur HTTP local.
 
-## Publier sur GitHub Pages
+## Publication sur GitHub Pages
 
-1. Créer un dépôt GitHub nommé `cyberlab-academy-v3`.
-2. Envoyer tous les fichiers et dossiers à la racine du dépôt.
-3. Ouvrir Settings > Pages.
-4. Dans Build and deployment, sélectionner Deploy from a branch.
-5. Choisir la branche `main` et le dossier `/ (root)`.
-6. Enregistrer et attendre la publication.
+1. Crée ou ouvre un dépôt GitHub.
+2. Ajoute `index.html`, `README.md`, `css/style.css` et les fichiers du dossier `js`.
+3. Conserve exactement la structure de dossiers indiquée ci-dessus.
+4. Ouvre **Settings → Pages** dans le dépôt.
+5. Dans **Build and deployment**, choisis **Deploy from a branch**.
+6. Sélectionne la branche `main` et le dossier `/ (root)`.
+7. Clique sur **Save**.
+8. Attends la fin du déploiement et ouvre l'adresse affichée dans la section Pages.
 
-L'adresse sera généralement :
+## Stockage et confidentialité
 
-https://TON-PSEUDO.github.io/cyberlab-academy-v3/
+Les données sont enregistrées dans le stockage local du navigateur.
+Il n'y a ni serveur applicatif ni synchronisation automatique.
+L'export JSON permet de sauvegarder manuellement la progression.
 
-Remplacer `TON-PSEUDO` par son identifiant GitHub.
+Ne place pas de mots de passe, de jetons d'accès ou d'informations sensibles
+dans les fichiers publiés.
 
-## Stockage et limites
+## Limites pédagogiques
 
-Les données de progression sont stockées localement dans le navigateur. Elles ne sont pas automatiquement synchronisées entre plusieurs appareils.
-
-Le laboratoire et le centre de supervision sont des simulations pédagogiques. Ils ne configurent pas de véritables équipements.
+Les commandes réseau et la supervision sont simulées.
+Aucun paquet réseau n'est envoyé et aucun serveur réel n'est supervisé.
 
 ## Licence
 
-Projet personnel à adapter et à enrichir.
+Projet pédagogique personnel. Ajoute une licence si tu souhaites préciser
+les conditions de réutilisation du code.
+```
