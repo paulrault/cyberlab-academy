@@ -1,161 +1,129 @@
 
-(() => {
-  "use strict";
+"use strict";
 
-  const missions = [
-    {
-      id: "ip",
-      icon: "⌘",
-      title: "Diagnostic IP",
-      level: "Débutant",
-      description: "Un poste possède l'adresse 192.168.10.25/24 et une passerelle 192.168.20.1. Explique le problème.",
-      keywords: ["sous-réseau", "masque", "passerelle"],
-      correction: "Avec un masque /24, le poste appartient au réseau 192.168.10.0/24. La passerelle 192.168.20.1 est dans un autre sous-réseau. Il faut vérifier le plan d'adressage et corriger la passerelle ou la configuration réseau."
-    },
-    {
-      id: "dns",
-      icon: "⌕",
-      title: "Résolution DNS",
-      level: "Débutant",
-      description: "Un utilisateur accède à un serveur par son adresse IP mais pas par son nom. Cite deux vérifications utiles.",
-      keywords: ["dns", "résolution", "serveur"],
-      correction: "Vérifier le serveur DNS configuré sur le client, tester la résolution du nom avec nslookup, contrôler l'enregistrement DNS et vérifier que le nom recherché est correct."
-    },
-    {
-      id: "ad",
-      icon: "▤",
-      title: "Active Directory",
-      level: "Intermédiaire",
-      description: "Un nouveau technicien doit accéder aux ressources réservées à son équipe. Comment organiser ses droits ?",
-      keywords: ["groupe", "moindre privilège", "permissions"],
-      correction: "Créer ou utiliser un groupe de sécurité adapté, ajouter le compte à ce groupe et attribuer les permissions nécessaires au groupe. Appliquer le principe du moindre privilège et tester l'accès."
-    },
-    {
-      id: "linux",
-      icon: "⌨",
-      title: "Serveur Debian",
-      level: "Intermédiaire",
-      description: "Un service Linux ne répond plus. Donne une démarche de diagnostic et une commande pertinente.",
-      keywords: ["systemctl", "journalctl", "logs"],
-      correction: "Identifier le service, vérifier son état avec systemctl status nom-du-service, consulter ses journaux avec journalctl -u nom-du-service, puis examiner les erreurs avant de modifier la configuration."
-    },
-    {
-      id: "docker",
-      icon: "▣",
-      title: "Conteneur Docker",
-      level: "Intermédiaire",
-      description: "Une application dans un conteneur n'est pas accessible depuis le navigateur. Quelles vérifications effectuer ?",
-      keywords: ["port", "logs", "conteneur"],
-      correction: "Vérifier l'état du conteneur avec docker ps, lire les journaux avec docker logs nom-du-conteneur et contrôler le mappage des ports ainsi que le service qui écoute dans le conteneur."
-    },
-    {
-      id: "backup",
-      icon: "◈",
-      title: "Sauvegarde",
-      level: "Avancé",
-      description: "Une sauvegarde vient de se terminer. Pourquoi faut-il vérifier sa restauration ?",
-      keywords: ["restauration", "intégrité", "test"],
-      correction: "Une sauvegarde réussie ne garantit pas que les données seront récupérables. Il faut tester régulièrement la restauration, contrôler l'intégrité et documenter la procédure."
-    }
-  ];
-
+window.CyberMissions = (() => {
   function escapeHTML(value) {
     return String(value).replace(/[&<>"']/g, char => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;",
-      '"': "&quot;", "'": "&#39;"
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
     })[char]);
   }
 
-  function render() {
-    const container = document.getElementById("missionsGrid");
-    if (!container) return;
-
-    const state = window.CyberStorage.getState();
-    container.replaceChildren();
-
-    missions.forEach(mission => {
+  function renderMissions(state) {
+    return window.CyberData.missions.map(mission => {
       const done = state.completedMissions.includes(mission.id);
-      const card = document.createElement("article");
-      card.className = "mission-card";
 
-      const title = document.createElement("h3");
-      title.textContent = mission.icon + "  " + mission.title;
-
-      const level = document.createElement("span");
-      level.className = "status-pill";
-      level.textContent = mission.level;
-
-      const description = document.createElement("p");
-      description.textContent = mission.description;
-
-      const meta = document.createElement("div");
-      meta.className = "card-meta";
-      meta.textContent = done ? "✓ Mission terminée" : "Récompense : 50 XP";
-
-      const details = document.createElement("details");
-      const summary = document.createElement("summary");
-      summary.textContent = "Voir l'énoncé et la correction";
-      details.appendChild(summary);
-
-      const answer = document.createElement("textarea");
-      answer.setAttribute("aria-label", "Réponse à la mission " + mission.title);
-      answer.placeholder = "Écris ta proposition avant de consulter la correction...";
-      details.appendChild(answer);
-
-      const correction = document.createElement("p");
-      correction.hidden = true;
-      correction.textContent = mission.correction;
-      details.appendChild(correction);
-
-      const controls = document.createElement("div");
-      controls.className = "mission-controls";
-
-      const check = document.createElement("button");
-      check.className = "primary-button";
-      check.textContent = done ? "Déjà validée" : "Valider ma réponse";
-      check.disabled = done;
-
-      const reveal = document.createElement("button");
-      reveal.className = "secondary-button";
-      reveal.textContent = "Afficher la correction";
-
-      check.addEventListener("click", () => {
-        const text = answer.value.trim().toLocaleLowerCase("fr");
-        if (text.length < 15) {
-          window.CyberApp.notify("Développe un peu ta réponse avant de la valider.");
-          return;
-        }
-
-        const matches = mission.keywords.filter(word =>
-          text.includes(word.toLocaleLowerCase("fr"))
-        );
-
-        if (matches.length < 2) {
-          window.CyberApp.notify("Ajoute au moins deux notions clés à ta réponse, puis réessaie.");
-          return;
-        }
-
-        const added = window.CyberStorage.completeMission(mission.id);
-        if (added) {
-          window.CyberApp.notify("Mission validée ! +50 XP.");
-          render();
-          window.CyberApp.refreshDashboard();
-        }
-      });
-
-      reveal.addEventListener("click", () => {
-        correction.hidden = !correction.hidden;
-        reveal.textContent = correction.hidden ? "Afficher la correction" : "Masquer la correction";
-      });
-
-      controls.append(check, reveal);
-      details.appendChild(controls);
-      card.append(title, level, description, meta, details);
-      container.appendChild(card);
-    });
+      return `
+        <article class="card module-card">
+          <div class="module-top">
+            <span class="module-icon">⚑</span>
+            <span class="tag">${escapeHTML(mission.difficulty)}</span>
+          </div>
+          <h3>${escapeHTML(mission.title)}</h3>
+          <p>${escapeHTML(mission.description)}</p>
+          <div class="module-top">
+            <span class="tag">${escapeHTML(mission.category)}</span>
+            <span class="muted small-text">${mission.xp} XP</span>
+          </div>
+          <div class="button-row">
+            <button class="button" data-action="hint" data-id="${mission.id}">Indice</button>
+            <button class="button" data-action="correction" data-id="${mission.id}">Correction</button>
+            <button class="button ${done ? "success" : "primary"}"
+              data-action="complete-mission" data-id="${mission.id}"
+              ${done ? "disabled" : ""}>${done ? "Terminée ✓" : "Valider"}</button>
+          </div>
+          <div id="mission-detail-${mission.id}"></div>
+        </article>
+      `;
+    }).join("");
   }
 
-  window.CyberMissions = { render, list: () => missions };
+  function getMission(id) {
+    return window.CyberData.missions.find(item => item.id === id);
+  }
 
-  document.addEventListener("DOMContentLoaded", render);
+  function showDetail(id, kind) {
+    const mission = getMission(id);
+    const target = document.getElementById(`mission-detail-${id}`);
+    if (!mission || !target) return;
+
+    const text = kind === "hint" ? mission.hint : mission.correction;
+    target.innerHTML = `<div class="notice ${kind === "hint" ? "" : "good"}">
+      <strong>${kind === "hint" ? "Indice" : "Correction pédagogique"}</strong>
+      <p>${escapeHTML(text)}</p>
+    </div>`;
+  }
+
+  function renderQuiz() {
+    return `
+      <div class="card">
+        <h3>Quiz de connaissances SISR</h3>
+        <p>10 questions sélectionnées aléatoirement. Une seule réponse est attendue par question.</p>
+        <div class="button-row">
+          <button class="button primary" data-action="start-quiz">Commencer un quiz</button>
+        </div>
+        <div id="quizArea"></div>
+      </div>`;
+  }
+
+  function startQuiz() {
+    const all = [...window.CyberData.questions];
+    all.sort(() => Math.random() - 0.5);
+    const questions = all.slice(0, Math.min(10, all.length));
+    const area = document.getElementById("quizArea");
+    if (!area) return;
+
+    area.innerHTML = `
+      <form id="quizForm">
+        ${questions.map((question, index) => `
+          <div class="question">
+            <strong>${index + 1}. ${escapeHTML(question.q)}</strong>
+            ${question.options.map((option, i) => `
+              <label class="option">
+                <input type="radio" name="q${index}" value="${i}" required>
+                <span>${escapeHTML(option)}</span>
+              </label>
+            `).join("")}
+            <div class="muted small-text" id="explanation-${index}"></div>
+          </div>
+        `).join("")}
+        <div class="button-row">
+          <button class="button primary" type="submit">Corriger le quiz</button>
+        </div>
+      </form>
+      <div id="quizResult"></div>`;
+
+    document.getElementById("quizForm").addEventListener("submit", event => {
+      event.preventDefault();
+
+      const form = new FormData(event.currentTarget);
+      let score = 0;
+
+      questions.forEach((question, index) => {
+        const chosen = Number(form.get(`q${index}`));
+        if (chosen === question.answer) score++;
+        const explanation = document.getElementById(`explanation-${index}`);
+        explanation.textContent =
+          `${chosen === question.answer ? "Correct." : "À revoir."} ${question.explanation}`;
+      });
+
+      const total = questions.length;
+      const points = score * 10;
+      window.CyberStorage.addQuiz(score, total, "Quiz SISR");
+      if (points > 0) window.CyberStorage.addXP(points, "Quiz SISR");
+
+      document.getElementById("quizResult").innerHTML = `
+        <div class="result">
+          <h3>Résultat : ${score}/${total}</h3>
+          <p>${Math.round(score / total * 100)} % de bonnes réponses</p>
+          <p>XP gagnés : ${points}</p>
+        </div>`;
+      window.CyberApp.refreshSidebar();
+    }, { once: true });
+  }
+
+  return { renderMissions, showDetail, renderQuiz, startQuiz };
 })();
