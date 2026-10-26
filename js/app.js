@@ -1,509 +1,507 @@
 
-(() => {
-  "use strict";
+"use strict";
 
-  const titles = {
+window.CyberApp = (() => {
+  const root = document.getElementById("pageContent");
+  const title = document.getElementById("pageTitle");
+  const toast = document.getElementById("toast");
+
+  const pageNames = {
     dashboard: "Tableau de bord",
-    courses: "Parcours SISR",
+    courses: "Centre de formation",
     lab: "Laboratoire réseau",
     missions: "Missions pratiques",
+    quiz: "Quiz & examens",
     supervision: "Supervision",
-    quiz: "Quiz & examens"
+    glossary: "Glossaire",
+    journal: "Journal de révision",
+    settings: "Paramètres"
   };
 
-  const courses = [
-    { id: "windows", icon: "▤", title: "Windows Server", desc: "Active Directory, DNS, DHCP, GPO et partages réseau.", lessons: 8 },
-    { id: "network", icon: "⌘", title: "Réseaux", desc: "IPv4, sous-réseaux, VLAN, routage et dépannage.", lessons: 10 },
-    { id: "linux", icon: "⌨", title: "Linux & Debian", desc: "Commandes, utilisateurs, services et permissions.", lessons: 8 },
-    { id: "security", icon: "◈", title: "Cybersécurité défensive", desc: "Journaux, mises à jour, droits et bonnes pratiques.", lessons: 8 },
-    { id: "docker", icon: "▣", title: "Docker", desc: "Images, conteneurs, volumes, ports et journaux.", lessons: 7 },
-    { id: "virtual", icon: "▦", title: "Virtualisation", desc: "Machines virtuelles, réseaux virtuels et snapshots.", lessons: 7 }
-  ];
+  let activePage = "dashboard";
+  let activeCourse = null;
+  let activeLesson = null;
+  let toastTimer = null;
 
-  const questions = [
-    {
-      q: "Quel service traduit un nom de domaine en adresse IP ?",
-      answers: ["DHCP", "DNS", "SSH", "NTP"],
-      correct: 1,
-      explanation: "DNS assure la résolution des noms en adresses IP."
-    },
-    {
-      q: "Quel service distribue automatiquement des paramètres IP ?",
-      answers: ["DHCP", "HTTP", "SMTP", "FTP"],
-      correct: 0,
-      explanation: "DHCP distribue notamment les adresses IP et la passerelle."
-    },
-    {
-      q: "Quelle commande affiche l'état d'un service systemd ?",
-      answers: ["systemctl status", "mkdir status", "ip route add", "chmod status"],
-      correct: 0,
-      explanation: "systemctl status nom-du-service affiche son état et des informations utiles."
-    },
-    {
-      q: "Quel principe consiste à accorder uniquement les droits nécessaires ?",
-      answers: ["Accès public", "Moindre privilège", "Compte partagé", "Désactivation des journaux"],
-      correct: 1,
-      explanation: "Le moindre privilège limite les droits à ce qui est nécessaire."
-    },
-    {
-      q: "Quelle commande permet de consulter les journaux d'un conteneur Docker ?",
-      answers: ["docker logs", "docker erase", "docker format", "docker password"],
-      correct: 0,
-      explanation: "docker logs nom-du-conteneur affiche ses journaux."
-    },
-    {
-      q: "Quel équipement permet d'interconnecter des réseaux IP différents ?",
-      answers: ["Un clavier", "Un routeur", "Un écran", "Un câble seul"],
-      correct: 1,
-      explanation: "Un routeur transfère des paquets entre différents réseaux IP."
-    },
-    {
-      q: "Pourquoi tester la restauration d'une sauvegarde ?",
-      answers: [
-        "Pour supprimer les journaux",
-        "Pour vérifier que les données sont récupérables",
-        "Pour désactiver les comptes",
-        "Pour changer l'adresse IP"
-      ],
-      correct: 1,
-      explanation: "Le test confirme que la sauvegarde est réellement exploitable."
-    }
-  ];
-
-  let quiz = [];
-  let questionIndex = 0;
-  let score = 0;
-  let answered = false;
-
-  function notify(message) {
-    const notice = document.getElementById("notice");
-    if (!notice) return;
-    notice.textContent = message;
-    notice.hidden = false;
-    clearTimeout(notify.timer);
-    notify.timer = setTimeout(() => { notice.hidden = true; }, 3500);
+  function escapeHTML(value) {
+    return String(value).replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    })[char]);
   }
 
-  function goTo(page) {
-    if (!titles[page]) return;
+  function notify(message) {
+    toast.textContent = message;
+    toast.classList.add("visible");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("visible"), 2800);
+  }
 
-    document.querySelectorAll(".page").forEach(section => {
-      section.classList.toggle("active", section.id === "page-" + page);
-    });
+  function refreshSidebar() {
+    const state = CyberStorage.get();
+    const level = CyberStorage.level();
+    const progress = CyberStorage.levelProgress();
 
-    document.querySelectorAll(".nav-item").forEach(button => {
-      button.classList.toggle("active", button.dataset.page === page);
-    });
+    document.getElementById("sidebarLevel").textContent = `Niveau ${level}`;
+    document.getElementById("sidebarProgress").style.width = `${progress / 250 * 100}%`;
+    document.getElementById("sidebarXp").textContent = `${state.xp} XP accumulés`;
+  }
 
-    document.getElementById("pageTitle").textContent = titles[page];
+  function setTheme(theme) {
+    document.body.classList.toggle("light", theme === "light");
+    CyberStorage.setTheme(theme);
+    document.getElementById("themeButton").textContent = theme === "light" ? "☾" : "☼";
+  }
 
-    if (page === "dashboard") refreshDashboard();
-    if (page === "courses") renderCourses();
-    if (page === "missions") window.CyberMissions.render();
-    if (page === "supervision") {
-      window.CyberSupervision.renderDevices();
-      window.CyberSupervision.renderLogs();
-    }
-    if (page === "quiz") renderHistory();
+  function stat(icon, label, value, note) {
+    return `<article class="card stat-card">
+      <div class="stat-icon">${icon}</div>
+      <div><span class="stat-label">${label}</span>
+      <strong class="stat-value">${value}</strong>
+      <span class="stat-note">${note}</span></div>
+    </article>`;
+  }
 
-    if (location.hash !== "#" + page) {
-      history.replaceState(null, "", "#" + page);
-    }
+  function sectionHeading(heading, description) {
+    return `<div class="section-heading"><div><h2>${heading}</h2><p>${description}</p></div></div>`;
+  }
+
+  function renderDashboard() {
+    const state = CyberStorage.get();
+    const totalLessons = CyberData.courses.reduce((sum, course) => sum + course.lessons.length, 0);
+    const doneLessons = state.completedLessons.length;
+    const doneMissions = state.completedMissions.length;
+    const totalMissions = CyberData.missions.length;
+    const percent = totalLessons ? Math.round(doneLessons / totalLessons * 100) : 0;
+    const recent = state.journal.slice(0, 5);
+
+    root.innerHTML = `
+      <section class="grid grid-4">
+        ${stat("⚡", "Expérience", `${state.xp} XP`, "Points gagnés")}
+        ${stat("🏅", "Niveau", CyberStorage.level(), `${CyberStorage.levelProgress()}/250 XP vers le niveau suivant`)}
+        ${stat("📚", "Cours terminés", `${doneLessons}/${totalLessons}`, "Leçons validées")}
+        ${stat("⚑", "Missions terminées", `${doneMissions}/${totalMissions}`, "Défis pratiques")}
+      </section>
+
+      <section class="section">
+        ${sectionHeading("Progression générale", "Suis tes apprentissages et choisis ta prochaine activité.")}
+        <div class="card">
+          <div class="module-top"><strong>Parcours de formation</strong><strong>${percent} %</strong></div>
+          <div class="progress-track"><span style="width:${percent}%"></span></div>
+          <p>Tu as terminé ${doneLessons} leçon(s) sur ${totalLessons}.</p>
+          <div class="button-row"><button class="button primary" data-page="courses">Continuer les cours</button><button class="button" data-page="missions">Explorer les missions</button></div>
+        </div>
+      </section>
+
+      <section class="section">
+        ${sectionHeading("Tes domaines SISR", "Choisis un parcours pour consulter les leçons.")}
+        <div class="grid grid-3">
+          ${CyberData.courses.slice(0, 6).map(course => `
+            <article class="card module-card">
+              <div class="module-top"><span class="module-icon">${course.icon}</span><span class="tag">${course.category}</span></div>
+              <h3>${course.title}</h3><p>${course.description}</p>
+              <span class="muted small-text">${course.lessons.length} leçon(s) · ${course.level}</span>
+              <div class="button-row"><button class="button" data-action="open-course" data-id="${course.id}">Découvrir</button></div>
+            </article>`).join("")}
+        </div>
+      </section>
+
+      <section class="section">
+        ${sectionHeading("Activité récente", "Les dernières actions enregistrées sur cet appareil.")}
+        <div class="card">
+          ${recent.length ? `<ul class="list">${recent.map(item => `
+            <li class="list-item"><strong>${escapeHTML(item.type)}</strong>
+            <span>${escapeHTML(item.description)}</span><div class="muted small-text">${new Date(item.date).toLocaleString("fr-FR")}</div></li>`).join("")}</ul>` : `<div class="empty">Aucune activité pour le moment. Termine une leçon ou une mission pour commencer ton suivi.</div>`}
+        </div>
+      </section>`;
   }
 
   function renderCourses() {
-    const container = document.getElementById("coursesGrid");
-    if (!container) return;
-    container.replaceChildren();
+    const state = CyberStorage.get();
+    root.innerHTML = `
+      ${sectionHeading("Centre de formation", "Des cours courts avec objectifs et exercices pratiques.")}
+      <div class="field"><label for="courseSearch">Rechercher un cours ou un domaine</label><input id="courseSearch" class="search-input" placeholder="Ex. DNS, Docker, sauvegarde..."></div>
+      <div class="grid grid-3" id="courseCards">
+        ${CyberData.courses.map(course => {
+          const done = course.lessons.filter(lesson => state.completedLessons.includes(lesson.id)).length;
+          return `<article class="card module-card" data-search="${escapeHTML((course.title + " " + course.description + " " + course.category).toLowerCase())}">
+            <div class="module-top"><span class="module-icon">${course.icon}</span><span class="tag">${course.category}</span></div>
+            <h3>${course.title}</h3><p>${course.description}</p>
+            <div class="progress-track"><span style="width:${done / course.lessons.length * 100}%"></span></div>
+            <span class="muted small-text">${done}/${course.lessons.length} leçon(s) terminée(s)</span>
+            <button class="button primary" data-action="open-course" data-id="${course.id}">Ouvrir le parcours</button>
+          </article>`;
+        }).join("")}
+      </div>`;
 
-    courses.forEach(course => {
-      const card = document.createElement("article");
-      card.className = "course-card";
-
-      const icon = document.createElement("div");
-      icon.className = "card-symbol";
-      icon.textContent = course.icon;
-
-      const title = document.createElement("h3");
-      title.textContent = course.title;
-
-      const desc = document.createElement("p");
-      desc.textContent = course.desc;
-
-      const meta = document.createElement("div");
-      meta.className = "card-meta";
-      meta.textContent = course.lessons + " notions à étudier • Parcours pédagogique";
-
-      const actions = document.createElement("div");
-      actions.className = "card-actions";
-
-      const button = document.createElement("button");
-      button.className = "primary-button";
-      button.textContent = "Voir les notions →";
-      button.addEventListener("click", () => showCourse(course));
-
-      actions.appendChild(button);
-      card.append(icon, title, desc, meta, actions);
-      container.appendChild(card);
-    });
-  }
-
-  function showCourse(course) {
-    const container = document.getElementById("coursesGrid");
-    container.replaceChildren();
-
-    const back = document.createElement("button");
-    back.className = "secondary-button";
-    back.textContent = "← Retour aux parcours";
-    back.addEventListener("click", renderCourses);
-
-    const panel = document.createElement("article");
-    panel.className = "panel";
-    const title = document.createElement("h2");
-    title.textContent = course.title;
-
-    const desc = document.createElement("p");
-    desc.textContent = course.desc;
-
-    const intro = document.createElement("p");
-    intro.textContent = "Lis chaque notion, puis marque-la comme étudiée. Ces fiches sont des points de départ pour tes travaux pratiques.";
-
-    const topics = {
-      windows: [
-        ["Active Directory", "Un annuaire centralise les identités, ordinateurs et groupes d'un domaine."],
-        ["DNS", "Le DNS permet notamment de localiser les services du domaine."],
-        ["DHCP", "DHCP attribue automatiquement des paramètres IP aux clients."],
-        ["GPO", "Les stratégies de groupe permettent de gérer certains paramètres des utilisateurs et ordinateurs."],
-        ["Partages réseau", "Les autorisations de partage et les permissions NTFS doivent être examinées ensemble."]
-      ],
-      network: [
-        ["IPv4", "Une adresse IPv4 identifie une interface dans un réseau."],
-        ["Masque et préfixe", "Le masque indique quelle partie de l'adresse correspond au réseau."],
-        ["Passerelle", "La passerelle permet d'acheminer le trafic vers d'autres réseaux."],
-        ["VLAN", "Un VLAN sépare logiquement des domaines de niveau 2."],
-        ["Diagnostic", "Procède par étapes : lien, IP, passerelle, DNS et service distant."]
-      ],
-      linux: [
-        ["Fichiers", "pwd, ls et cd permettent de se repérer dans l'arborescence."],
-        ["Permissions", "Les droits propriétaire, groupe et autres contrôlent l'accès."],
-        ["Services", "systemctl permet de contrôler les services systemd."],
-        ["Journaux", "journalctl aide à examiner les événements et erreurs."],
-        ["Réseau", "ip address et ip route affichent les interfaces et routes."]
-      ],
-      security: [
-        ["Moindre privilège", "Accorde seulement les droits indispensables."],
-        ["Mises à jour", "Maintiens les systèmes et applications à jour."],
-        ["Authentification", "Utilise des mots de passe uniques et l'authentification multifacteur quand possible."],
-        ["Journaux", "Les journaux permettent de repérer des événements inhabituels."],
-        ["Sauvegardes", "Protège les sauvegardes et vérifie leur restauration."]
-      ],
-      docker: [
-        ["Image", "Une image est le modèle utilisé pour créer un conteneur."],
-        ["Conteneur", "Un conteneur exécute une application dans un environnement isolé."],
-        ["Ports", "Le mappage de ports expose un service vers l'hôte."],
-        ["Volumes", "Les volumes conservent des données indépendamment du cycle de vie du conteneur."],
-        ["Journaux", "docker logs aide à diagnostiquer le démarrage et l'exécution."]
-      ],
-      virtual: [
-        ["Hyperviseur", "Il permet d'exécuter plusieurs machines virtuelles sur un hôte."],
-        ["Ressources", "CPU, mémoire et stockage doivent être dimensionnés."],
-        ["Réseaux virtuels", "Ils relient les VM entre elles ou au réseau physique."],
-        ["Instantanés", "Un instantané facilite certains retours en arrière, mais ne remplace pas une sauvegarde."],
-        ["Tests", "Teste l'accès, la connectivité et les services après un changement."]
-      ]
-    };
-
-    const list = document.createElement("div");
-    list.className = "course-progress";
-    const saved = JSON.parse(localStorage.getItem("cyberlab-lessons-v3") || "{}");
-
-    (topics[course.id] || []).forEach((topic, index) => {
-      const row = document.createElement("div");
-      const label = document.createElement("label");
-      label.className = "task-item";
-
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.style.width = "auto";
-      checkbox.checked = Boolean(saved[course.id + "-" + index]);
-
-      const text = document.createElement("span");
-      text.style.flex = "1";
-      const strong = document.createElement("strong");
-      strong.textContent = topic[0];
-      const small = document.createElement("small");
-      small.textContent = topic[1];
-      text.append(strong, small);
-      label.append(checkbox, text);
-      row.appendChild(label);
-      list.appendChild(row);
-
-      checkbox.addEventListener("change", () => {
-        saved[course.id + "-" + index] = checkbox.checked;
-        localStorage.setItem("cyberlab-lessons-v3", JSON.stringify(saved));
-        updateCourseProgress();
+    document.getElementById("courseSearch").addEventListener("input", event => {
+      const query = event.target.value.toLowerCase().trim();
+      document.querySelectorAll("#courseCards [data-search]").forEach(card => {
+        card.hidden = !card.dataset.search.includes(query);
       });
     });
-
-    panel.append(title, desc, intro, list);
-    container.append(back, panel);
   }
 
-  function updateCourseProgress() {
-    const saved = JSON.parse(localStorage.getItem("cyberlab-lessons-v3") || "{}");
-    const values = Object.values(saved);
-    const total = values.length ? Math.round(values.filter(Boolean).length / 30 * 100) : 0;
-    const el = document.getElementById("progressStat");
-    if (el) el.textContent = Math.min(100, total) + "%";
+  function renderCourse(courseId) {
+    const course = CyberData.courses.find(item => item.id === courseId);
+    if (!course) return renderCourses();
+
+    activeCourse = course.id;
+    const state = CyberStorage.get();
+
+    root.innerHTML = `
+      <div class="section-heading"><div><h2>${course.icon} ${course.title}</h2><p>${course.description}</p></div><button class="button" data-page="courses">← Tous les cours</button></div>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>Leçons du parcours</h3>
+          <ul class="list">${course.lessons.map(lesson => `
+            <li class="list-item">
+              <strong>${state.completedLessons.includes(lesson.id) ? "✓ " : ""}${lesson.title}</strong>
+              <span class="muted small-text">${lesson.duration}</span>
+              <div class="button-row"><button class="button" data-action="open-lesson" data-course="${course.id}" data-id="${lesson.id}">Lire la leçon</button></div>
+            </li>`).join("")}</ul>
+        </div>
+        <div class="card"><h3>Objectif du parcours</h3>
+          <p>Comprendre les notions essentielles puis les appliquer dans un environnement de laboratoire contrôlé.</p>
+          <div class="notice">Note tes commandes, paramètres et résultats dans le journal de révision.</div>
+        </div>
+      </div>
+      <div id="lessonContent" class="section"></div>`;
   }
 
-  function refreshDashboard() {
-    const state = window.CyberStorage.getState();
-    document.getElementById("xpStat").textContent = state.xp;
-    document.getElementById("missionStat").textContent = state.completedMissions.length;
-    document.getElementById("quizStat").textContent = state.quizHistory.length;
+  function renderLesson(courseId, lessonId) {
+    const course = CyberData.courses.find(item => item.id === courseId);
+    const lesson = course && course.lessons.find(item => item.id === lessonId);
+    if (!course || !lesson) return;
 
-    const lessonData = JSON.parse(localStorage.getItem("cyberlab-lessons-v3") || "{}");
-    const completed = Object.values(lessonData).filter(Boolean).length;
-    const missionsDone = state.completedMissions.length;
-    const quizDone = Math.min(state.quizHistory.length, 5);
-    const percent = Math.round((completed / 30 * 70) + (missionsDone / 6 * 20) + (quizDone / 5 * 10));
-    document.getElementById("progressStat").textContent = Math.min(100, percent) + "%";
+    activeCourse = courseId;
+    activeLesson = lessonId;
 
-    const container = document.getElementById("courseProgress");
-    container.replaceChildren();
-
-    const progress = [
-      ["Notions étudiées", completed, 30],
-      ["Missions terminées", missionsDone, 6],
-      ["Quiz réalisés", quizDone, 5]
-    ];
-
-    progress.forEach(([name, done, total]) => {
-      const item = document.createElement("div");
-      const heading = document.createElement("div");
-      heading.className = "progress-heading";
-      const left = document.createElement("span");
-      left.textContent = name;
-      const right = document.createElement("span");
-      right.textContent = done + " / " + total;
-      heading.append(left, right);
-
-      const track = document.createElement("div");
-      track.className = "progress-track";
-      const fill = document.createElement("div");
-      fill.className = "progress-fill";
-      fill.style.width = Math.min(100, done / total * 100) + "%";
-      track.appendChild(fill);
-      item.append(heading, track);
-      container.appendChild(item);
-    });
+    const state = CyberStorage.get();
+    const done = state.completedLessons.includes(lesson.id);
+    document.getElementById("lessonContent").innerHTML = `
+      <article class="card">
+        <span class="tag">${course.title} · ${lesson.duration}</span>
+        <h2>${lesson.title}</h2>
+        ${lesson.content.map(paragraph => `<p>${paragraph}</p>`).join("")}
+        <hr>
+        <h3>Exercice pratique</h3><p>${lesson.task}</p>
+        <div class="field"><label for="lessonNotes">Mes notes personnelles (facultatif)</label><textarea id="lessonNotes" placeholder="Note tes observations ici..."></textarea></div>
+        <div class="button-row">
+          <button class="button primary" data-action="complete-lesson" data-id="${lesson.id}" data-title="${escapeHTML(lesson.title)}" ${done ? "disabled" : ""}>${done ? "Leçon terminée ✓" : "Marquer comme terminée (+25 XP)"}</button>
+          <button class="button" data-action="save-lesson-note" data-title="${escapeHTML(lesson.title)}">Ajouter les notes au journal</button>
+        </div>
+      </article>`;
   }
 
-  function startQuiz() {
-    quiz = [...questions].sort(() => Math.random() - 0.5).slice(0, 5);
-    questionIndex = 0;
-    score = 0;
-    answered = false;
-    document.getElementById("quizFeedback").hidden = true;
-    showQuestion();
-  }
+  function renderLab() {
+    root.innerHTML = `
+      ${sectionHeading("Laboratoire réseau", "Entraîne-toi à calculer un sous-réseau et à interpréter des commandes simulées.")}
+      <div class="grid grid-2">
+        <section class="card">
+          <h3>Calculateur IPv4 / CIDR</h3>
+          <p>Entre une adresse IPv4 et un préfixe entre /0 et /32.</p>
+          <form id="subnetForm">
+            <div class="field"><label for="ipAddress">Adresse IPv4</label><input id="ipAddress" value="192.168.10.25" required></div>
+            <div class="field"><label for="prefix">Préfixe CIDR</label><select id="prefix">${Array.from({length:33},(_,i)=>32-i).map(n=>`<option value="${n}" ${n===24?"selected":""}>/${n}</option>`).join("")}</select></div>
+            <button class="button primary" type="submit">Calculer le sous-réseau</button>
+          </form>
+          <div id="subnetResult"></div>
+        </section>
+        <section class="card">
+          <h3>Console réseau simulée</h3>
+          <p>Commandes autorisées : help, ipconfig, ip addr, ip route, ping 192.168.10.1, clear.</p>
+          <form id="consoleForm">
+            <div class="field"><label for="consoleCommand">Commande</label><input id="consoleCommand" placeholder="help" autocomplete="off" required></div>
+            <button class="button primary" type="submit">Exécuter la simulation</button>
+          </form>
+          <pre class="code-output" id="consoleOutput">CyberLab Console V4
+Saisis help pour commencer.
+Aucune commande système réelle n'est exécutée.</pre>
+        </section>
+      </div>
+      <section class="section card">
+        <h3>Checklist de diagnostic</h3>
+        <p class="muted">Coche les étapes effectuées pendant un exercice.</p>
+        ${["Vérifier le lien réseau et le VLAN","Vérifier l'adresse IP et le masque","Contrôler la passerelle par défaut","Tester la résolution DNS","Consulter les journaux et noter les résultats"].map((item,index)=>`
+          <label class="option"><input type="checkbox" class="lab-check"><span>${item}</span></label>`).join("")}
+        <p id="checkCount" class="muted small-text">0/5 étapes cochées</p>
+      </section>`;
 
-  function showQuestion() {
-    const area = document.getElementById("quizArea");
-    const question = quiz[questionIndex];
-    answered = false;
-    document.getElementById("quizCounter").textContent =
-      "Question " + (questionIndex + 1) + " / " + quiz.length;
-
-    area.replaceChildren();
-
-    const progress = document.createElement("p");
-    progress.className = "quiz-progress";
-    progress.textContent = "Question " + (questionIndex + 1) + " sur " + quiz.length;
-
-    const title = document.createElement("p");
-    title.className = "quiz-question";
-    title.textContent = question.q;
-
-    const options = document.createElement("div");
-    question.answers.forEach((answer, index) => {
-      const button = document.createElement("button");
-      button.className = "quiz-option";
-      button.textContent = answer;
-      button.addEventListener("click", () => answerQuestion(index, options));
-      options.appendChild(button);
-    });
-
-    area.append(progress, title, options);
-  }
-
-  function answerQuestion(index, options) {
-    if (answered) return;
-    answered = true;
-
-    const question = quiz[questionIndex];
-    if (index === question.correct) score++;
-
-    [...options.children].forEach((button, i) => {
-      button.disabled = true;
-      if (i === question.correct) button.classList.add("correct");
-      if (i === index && i !== question.correct) button.classList.add("incorrect");
-    });
-
-    const feedback = document.getElementById("quizFeedback");
-    feedback.hidden = false;
-    feedback.className = "result-box " + (index === question.correct ? "success" : "error");
-    feedback.textContent = (index === question.correct ? "Bonne réponse. " : "Pas tout à fait. ") + question.explanation;
-
-    const next = document.createElement("button");
-    next.className = "primary-button";
-    next.style.marginTop = "12px";
-    next.textContent = questionIndex === quiz.length - 1 ? "Voir le résultat" : "Question suivante";
-    next.addEventListener("click", () => {
-      if (questionIndex < quiz.length - 1) {
-        questionIndex++;
-        feedback.hidden = true;
-        showQuestion();
-      } else {
-        finishQuiz();
+    document.getElementById("subnetForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const result = document.getElementById("subnetResult");
+      try {
+        const net = CyberLab.calculate(document.getElementById("ipAddress").value, document.getElementById("prefix").value);
+        result.innerHTML = `<div class="result">
+          <h3>Résultat</h3><div class="table-wrap"><table>
+          <tbody>
+            <tr><td>Adresse saisie</td><td>${net.ip}/${net.prefix}</td></tr>
+            <tr><td>Masque</td><td>${net.mask}</td></tr>
+            <tr><td>Adresse réseau</td><td>${net.network}</td></tr>
+            <tr><td>Broadcast</td><td>${net.broadcast}</td></tr>
+            <tr><td>Première adresse indicative</td><td>${net.first}</td></tr>
+            <tr><td>Dernière adresse indicative</td><td>${net.last}</td></tr>
+            <tr><td>Adresses totales</td><td>${net.total.toLocaleString("fr-FR")}</td></tr>
+            <tr><td>Hôtes utilisables (convention usuelle)</td><td>${net.usable.toLocaleString("fr-FR")}</td></tr>
+          </tbody></table></div>
+          <p class="muted small-text">Pour /31 et /32, les conventions d'utilisation diffèrent des sous-réseaux IPv4 classiques.</p>
+        </div>`;
+      } catch (error) {
+        result.innerHTML = `<div class="notice bad">${escapeHTML(error.message)}</div>`;
       }
     });
-    feedback.appendChild(document.createElement("br"));
-    feedback.appendChild(next);
+
+    document.getElementById("consoleForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const command = document.getElementById("consoleCommand").value;
+      const output = document.getElementById("consoleOutput");
+      const lines = CyberLab.simulatedCommand(command);
+      output.textContent = lines.length ? lines.join("\n") : "Console effacée. Saisis help pour afficher les commandes.";
+      if (command.trim().toLowerCase() === "clear") output.textContent = "Console effacée.";
+    });
+
+    document.querySelectorAll(".lab-check").forEach(check => {
+      check.addEventListener("change", () => {
+        const checks = [...document.querySelectorAll(".lab-check")];
+        document.getElementById("checkCount").textContent =
+          `${checks.filter(item => item.checked).length}/${checks.length} étapes cochées`;
+      });
+    });
   }
 
-  function finishQuiz() {
-    window.CyberStorage.addQuizResult(score, quiz.length);
-    const area = document.getElementById("quizArea");
-    area.replaceChildren();
+  function renderGlossary() {
+    root.innerHTML = `
+      ${sectionHeading("Glossaire informatique", "Recherche rapide parmi les notions clés du BTS SIO SISR.")}
+      <div class="field"><label for="glossarySearch">Rechercher un terme</label><input id="glossarySearch" class="search-input" placeholder="Ex. VLAN, RTO, DNS..."></div>
+      <div class="grid grid-2" id="glossaryList">
+        ${CyberData.glossary.map(([term, definition]) => `
+          <article class="card glossary-item" data-search="${escapeHTML((term+" "+definition).toLowerCase())}">
+            <h3>${escapeHTML(term)}</h3><p>${escapeHTML(definition)}</p>
+          </article>`).join("")}
+      </div>`;
 
-    const title = document.createElement("h3");
-    title.textContent = "Résultat : " + score + " / " + quiz.length;
-
-    const desc = document.createElement("p");
-    desc.textContent = "Score : " + Math.round(score / quiz.length * 100) + "%. Continue à réviser les notions où tu hésites.";
-
-    const restart = document.createElement("button");
-    restart.className = "primary-button";
-    restart.textContent = "Recommencer un quiz";
-    restart.addEventListener("click", startQuiz);
-
-    area.append(title, desc, restart);
-    document.getElementById("quizCounter").textContent = "Terminé";
-    document.getElementById("quizFeedback").hidden = true;
-    refreshDashboard();
-    renderHistory();
+    document.getElementById("glossarySearch").addEventListener("input", event => {
+      const query = event.target.value.toLowerCase().trim();
+      document.querySelectorAll(".glossary-item").forEach(item => {
+        item.hidden = !item.dataset.search.includes(query);
+      });
+    });
   }
 
-  function renderHistory() {
-    const container = document.getElementById("quizHistory");
-    if (!container) return;
-    container.replaceChildren();
+  function renderJournal() {
+    const state = CyberStorage.get();
+    root.innerHTML = `
+      ${sectionHeading("Journal de révision", "Consulte tes activités et conserve tes notes de travail.")}
+      <section class="card">
+        <h3>Ajouter une note</h3>
+        <form id="journalForm">
+          <div class="field"><label for="journalType">Type de note</label>
+            <select id="journalType"><option>Révision</option><option>Incident</option><option>Commande</option><option>Objectif</option><option>Compte rendu</option></select>
+          </div>
+          <div class="field"><label for="journalText">Contenu</label><textarea id="journalText" required maxlength="3000" placeholder="Ce que tu as appris, une commande, un problème rencontré..."></textarea></div>
+          <button class="button primary" type="submit">Enregistrer la note</button>
+        </form>
+      </section>
+      <section class="section card">
+        <div class="section-heading"><h2>Historique</h2><span class="tag">${state.journal.length} entrée(s)</span></div>
+        ${state.journal.length ? `<ul class="list">${state.journal.map(item=>`
+          <li class="list-item"><strong>${escapeHTML(item.type)}</strong>
+          <p>${escapeHTML(item.description)}</p>
+          <span class="muted small-text">${new Date(item.date).toLocaleString("fr-FR")}</span></li>`).join("")}</ul>` : `<div class="empty">Ton journal est vide. Ajoute une première note ci-dessus.</div>`}
+      </section>
+      <section class="section card">
+        <h3>Historique des quiz</h3>
+        ${state.quizHistory.length ? `<div class="table-wrap"><table><thead><tr><th>Quiz</th><th>Résultat</th><th>Date</th></tr></thead><tbody>
+          ${state.quizHistory.map(item=>`<tr><td>${escapeHTML(item.title)}</td><td>${item.score}/${item.total}</td><td>${new Date(item.date).toLocaleString("fr-FR")}</td></tr>`).join("")}
+        </tbody></table></div>` : `<p class="muted">Aucun quiz enregistré pour le moment.</p>`}
+      </section>`;
+    document.getElementById("journalForm").addEventListener("submit", event => {
+      event.preventDefault();
+      const type = document.getElementById("journalType").value;
+      const description = document.getElementById("journalText").value.trim();
+      if (!description) return;
+      CyberStorage.addJournal(type, description);
+      notify("Note enregistrée.");
+      renderJournal();
+    });
+  }
 
-    const historyItems = window.CyberStorage.getState().quizHistory;
-    if (!historyItems.length) {
-      const empty = document.createElement("p");
-      empty.className = "card-meta";
-      empty.textContent = "Aucun quiz effectué pour le moment.";
-      container.appendChild(empty);
+  function renderSettings() {
+    const state = CyberStorage.get();
+    root.innerHTML = `
+      ${sectionHeading("Paramètres", "Gère l'apparence et tes données locales.")}
+      <div class="grid grid-2">
+        <section class="card">
+          <h3>Apparence</h3><p>Choisis le thème adapté à tes préférences.</p>
+          <div class="button-row"><button class="button" data-action="theme-dark">Thème sombre</button><button class="button" data-action="theme-light">Thème clair</button></div>
+        </section>
+        <section class="card">
+          <h3>Sauvegarde locale</h3>
+          <p>Export JSON pour conserver une copie de ta progression ou la transférer manuellement.</p>
+          <div class="button-row"><button class="button primary" data-action="export-data">Exporter les données</button>
+          <button class="button" data-action="import-data">Importer une sauvegarde</button></div>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
+          <p class="muted small-text">N'importe que des sauvegardes que tu connais et dont tu as confiance. L'import remplace la progression actuelle.</p>
+        </section>
+        <section class="card">
+          <h3>Statistiques détaillées</h3>
+          <ul class="list">
+            <li class="list-item">XP total : <strong>${state.xp}</strong></li>
+            <li class="list-item">Niveau : <strong>${CyberStorage.level()}</strong></li>
+            <li class="list-item">Cours terminés : <strong>${state.completedLessons.length}</strong></li>
+            <li class="list-item">Missions terminées : <strong>${state.completedMissions.length}</strong></li>
+            <li class="list-item">Quiz réalisés : <strong>${state.quizHistory.length}</strong></li>
+          </ul>
+        </section>
+        <section class="card">
+          <h3>Réinitialiser la progression</h3>
+          <p>Cette action efface la progression enregistrée dans ce navigateur.</p>
+          <button class="button danger" data-action="reset-data">Réinitialiser mes données</button>
+        </section>
+      </div>`;
+  }
+
+  function renderPage(page) {
+    activePage = pageNames[page] ? page : "dashboard";
+    title.textContent = pageNames[activePage];
+    document.querySelectorAll("[data-page].nav-link").forEach(button => {
+      button.classList.toggle("active", button.dataset.page === activePage);
+    });
+
+    if (activePage === "dashboard") renderDashboard();
+    else if (activePage === "courses") renderCourses();
+    else if (activePage === "lab") renderLab();
+    else if (activePage === "missions") {
+      root.innerHTML = `${sectionHeading("Missions pratiques", "Résous des incidents fictifs et valide tes compétences.")}<div class="grid grid-2">${CyberMissions.renderMissions(CyberStorage.get())}</div>`;
+    } else if (activePage === "quiz") {
+      root.innerHTML = `${sectionHeading("Quiz et examens blancs", "Teste tes connaissances et consulte tes résultats.")}${CyberMissions.renderQuiz()}`;
+    } else if (activePage === "supervision") {
+      root.innerHTML = `${sectionHeading("Supervision pédagogique", "Analyse des métriques et incidents simulés.")}${CyberSupervision.render()}`;
+    } else if (activePage === "glossary") renderGlossary();
+    else if (activePage === "journal") renderJournal();
+    else if (activePage === "settings") renderSettings();
+
+    refreshSidebar();
+  }
+
+  function navigate(page) {
+    renderPage(page);
+    document.getElementById("sidebar").classList.remove("open");
+    document.getElementById("content").focus({ preventScroll: true });
+  }
+
+  document.addEventListener("click", event => {
+    const pageButton = event.target.closest("[data-page]");
+    if (pageButton) {
+      event.preventDefault();
+      navigate(pageButton.dataset.page);
       return;
     }
 
-    historyItems.forEach(item => {
-      const row = document.createElement("div");
-      row.className = "history-row";
-      const date = document.createElement("span");
-      date.textContent = item.date;
-      const result = document.createElement("strong");
-      result.textContent = item.score + " / " + item.total;
-      row.append(date, result);
-      container.appendChild(row);
-    });
-  }
+    const button = event.target.closest("[data-action]");
+    if (!button) return;
 
-  function exportBackup() {
-    const blob = new Blob([window.CyberStorage.exportData()], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "cyberlab-academy-v3-backup.json";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    notify("Export lancé. Conserve le fichier de sauvegarde en lieu sûr.");
-  }
+    const action = button.dataset.action;
+    const id = button.dataset.id;
 
-  function importBackup(file) {
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        window.CyberStorage.importData(String(reader.result));
-        applyTheme();
-        refreshDashboard();
-        renderHistory();
-        window.CyberMissions.render();
-        notify("Sauvegarde importée.");
-      } catch (error) {
-        notify(error.message || "Import impossible.");
+    if (action === "open-course") {
+      renderCourse(id);
+    } else if (action === "open-lesson") {
+      const courseId = button.dataset.course;
+      const lessonId = button.dataset.id;
+      renderLesson(courseId, lessonId);
+    } else if (action === "complete-lesson") {
+      const done = CyberStorage.completeLesson(id, button.dataset.title);
+      if (done) {
+        notify("Leçon validée : +25 XP.");
+        renderCourse(activeCourse);
+        renderLesson(activeCourse, id);
+        refreshSidebar();
+      } else notify("Cette leçon est déjà terminée.");
+    } else if (action === "save-lesson-note") {
+      const field = document.getElementById("lessonNotes");
+      const note = field && field.value.trim();
+      if (!note) return notify("Ajoute une note avant de l'enregistrer.");
+      CyberStorage.addJournal("Cours", `${button.dataset.title} : ${note}`);
+      notify("Notes ajoutées au journal.");
+    } else if (action === "hint" || action === "correction") {
+      CyberMissions.showDetail(id, action);
+    } else if (action === "complete-mission") {
+      const mission = CyberData.missions.find(item => item.id === id);
+      if (!mission) return;
+      if (CyberStorage.completeMission(id, mission.title, mission.xp)) {
+        notify(`Mission validée : +${mission.xp} XP.`);
+        renderPage("missions");
+      } else notify("Cette mission est déjà terminée.");
+    } else if (action === "start-quiz") {
+      CyberMissions.startQuiz();
+    } else if (action === "inspect-server") {
+      CyberSupervision.inspect(id);
+    } else if (action === "save-incident") {
+      const field = document.getElementById("incidentNote");
+      if (!field || !field.value.trim()) return notify("Écris ton diagnostic avant de l'enregistrer.");
+      CyberStorage.addJournal("Diagnostic de supervision", field.value.trim());
+      field.value = "";
+      notify("Diagnostic enregistré dans le journal.");
+    } else if (action === "theme-dark") {
+      setTheme("dark"); notify("Thème sombre activé.");
+    } else if (action === "theme-light") {
+      setTheme("light"); notify("Thème clair activé.");
+    } else if (action === "export-data") {
+      CyberStorage.exportJSON(); notify("Export demandé par le navigateur.");
+    } else if (action === "import-data") {
+      document.getElementById("importFile").click();
+    } else if (action === "reset-data") {
+      if (confirm("Effacer la progression et les notes enregistrées dans ce navigateur ? Cette action est irréversible sans sauvegarde.")) {
+        CyberStorage.reset();
+        setTheme("dark");
+        notify("Progression réinitialisée.");
+        renderPage("dashboard");
       }
-    };
-    reader.onerror = () => notify("Impossible de lire ce fichier.");
-    reader.readAsText(file);
-  }
+    }
+  });
 
-  function applyTheme() {
-    const light = window.CyberStorage.getState().theme === "light";
-    document.body.classList.toggle("light-theme", light);
-    document.getElementById("themeToggle").textContent =
-      light ? "☾ Activer le thème sombre" : "☼ Activer le thème clair";
-  }
+  document.getElementById("themeButton").addEventListener("click", () => {
+    const next = document.body.classList.contains("light") ? "dark" : "light";
+    setTheme(next);
+  });
+
+  document.getElementById("menuButton").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.toggle("open");
+  });
+
+  document.addEventListener("change", async event => {
+    if (event.target.id !== "importFile" || !event.target.files.length) return;
+
+    try {
+      if (!confirm("Importer cette sauvegarde remplacera les données actuelles. Continuer ?")) {
+        event.target.value = "";
+        return;
+      }
+      await CyberStorage.importJSON(event.target.files[0]);
+      setTheme(CyberStorage.get().settings.theme);
+      notify("Sauvegarde importée.");
+      renderPage("dashboard");
+    } catch (error) {
+      notify(`Import refusé : ${error.message}`);
+    } finally {
+      event.target.value = "";
+    }
+  });
 
   function init() {
-    document.querySelectorAll("[data-page]").forEach(button => {
-      button.addEventListener("click", () => goTo(button.dataset.page));
-    });
-
-    document.querySelectorAll("[data-go]").forEach(button => {
-      button.addEventListener("click", () => goTo(button.dataset.go));
-    });
-
-    document.getElementById("themeToggle").addEventListener("click", () => {
-      const next = document.body.classList.contains("light-theme") ? "dark" : "light";
-      window.CyberStorage.setTheme(next);
-      applyTheme();
-    });
-
-    document.getElementById("exportButton").addEventListener("click", exportBackup);
-    document.getElementById("startQuiz").addEventListener("click", startQuiz);
-
-    const importInput = document.createElement("input");
-    importInput.type = "file";
-    importInput.accept = ".json,application/json";
-    importInput.hidden = true;
-    importInput.addEventListener("change", () => {
-      if (importInput.files && importInput.files[0]) importBackup(importInput.files[0]);
-      importInput.value = "";
-    });
-    document.getElementById("exportButton").insertAdjacentElement("afterend", importInput);
-
-    const importButton = document.createElement("button");
-    importButton.className = "secondary-button";
-    importButton.textContent = "Importer";
-    importButton.addEventListener("click", () => importInput.click());
-    document.getElementById("exportButton").insertAdjacentElement("afterend", importButton);
-
-    applyTheme();
-    renderCourses();
-    refreshDashboard();
-    renderHistory();
-
-    const requested = location.hash.replace("#", "");
-    goTo(titles[requested] ? requested : "dashboard");
+    setTheme(CyberStorage.get().settings.theme);
+    const state = CyberStorage.get();
+    const today = new Date().toISOString().slice(0, 10);
+    if (state.lastVisit !== today) {
+      state.lastVisit = today;
+      CyberStorage.addJournal("Activité", "Ouverture de CyberLab Academy.");
+      CyberStorage.save();
+    }
+    renderPage("dashboard");
   }
 
-  window.CyberApp = { notify, goTo, refreshDashboard };
-
-  document.addEventListener("DOMContentLoaded", init);
+  return { init, refreshSidebar, navigate };
 })();
+
+window.addEventListener("DOMContentLoaded", () => window.CyberApp.init());
