@@ -5,77 +5,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1220">
-  <meta name="description" content="CyberLab Academy V4 : plateforme pédagogique BTS SIO SISR.">
-  <title>CyberLab Academy V4</title>
+  <meta name="description" content="CyberLab Academy V5 : plateforme pédagogique systèmes, réseaux et cybersécurité défensive.">
+  <title>CyberLab Academy V5</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#dashboard" data-page="dashboard">
+      <a href="#" class="brand" data-page="dashboard">
         <span class="brand-icon">C</span>
-        <span><strong>CyberLab</strong><small>ACADEMY V4</small></span>
+        <span><strong>CyberLab</strong><small>ACADEMY V5</small></span>
       </a>
 
-      <div class="side-label">ESPACE DE TRAVAIL</div>
+      <div class="profile-mini">
+        <div class="avatar">IT</div>
+        <div><strong>Mon laboratoire</strong><small id="sidebarLevel">Niveau 1</small></div>
+      </div>
+
+      <div class="sidebar-progress">
+        <div class="between"><span>Progression XP</span><strong id="sidebarXp">0 XP</strong></div>
+        <div class="progress-track"><span id="sidebarProgress" style="width:0%"></span></div>
+      </div>
+
+      <p class="nav-label">ESPACE DE TRAVAIL</p>
       <nav class="navigation" aria-label="Navigation principale">
         <button class="nav-link active" data-page="dashboard"><span>▦</span> Tableau de bord</button>
-        <button class="nav-link" data-page="courses"><span>▤</span> Centre de formation</button>
+        <button class="nav-link" data-page="courses"><span>▤</span> Formations</button>
+        <button class="nav-link" data-page="missions"><span>⚑</span> Missions</button>
+        <button class="nav-link" data-page="quiz"><span>✓</span> Quiz & examens</button>
         <button class="nav-link" data-page="lab"><span>⌘</span> Laboratoire réseau</button>
-        <button class="nav-link" data-page="missions"><span>⚑</span> Missions pratiques</button>
-        <button class="nav-link" data-page="quiz"><span>?</span> Quiz & examens</button>
         <button class="nav-link" data-page="supervision"><span>◉</span> Supervision</button>
         <button class="nav-link" data-page="glossary"><span>▧</span> Glossaire</button>
         <button class="nav-link" data-page="journal"><span>☷</span> Journal de révision</button>
       </nav>
 
       <div class="sidebar-bottom">
-        <div class="mini-card">
-          <span class="eyebrow">TON PARCOURS</span>
-          <strong id="sidebarLevel">Niveau 1</strong>
-          <div class="progress-track"><span id="sidebarProgress"></span></div>
-          <small id="sidebarXp">0 XP accumulés</small>
-        </div>
         <button class="nav-link" data-page="settings"><span>⚙</span> Paramètres</button>
+        <div class="sidebar-note">Mode pédagogique<br><strong>Stockage local</strong></div>
       </div>
     </aside>
 
     <main class="main-area">
       <header class="topbar">
         <button class="icon-button mobile-menu" id="menuButton" aria-label="Ouvrir le menu">☰</button>
-        <div class="breadcrumb"><span>CyberLab Academy</span><span>/</span><strong id="pageTitle">Tableau de bord</strong></div>
-        <div class="top-actions">
-          <span class="status-pill"><span class="status-dot"></span> Mode pédagogique</span>
-          <button class="icon-button" id="themeButton" title="Changer de thème" aria-label="Changer de thème">☼</button>
+        <div>
+          <p class="eyebrow">ESPACE PERSONNEL / SISR</p>
+          <h1 id="pageTitle">Tableau de bord</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="online-indicator"><i></i> Mode local</span>
+          <button class="icon-button" id="themeButton" aria-label="Changer de thème" title="Changer de thème">☼</button>
         </div>
       </header>
 
-      <div class="content" id="content" tabindex="-1">
-        <section class="welcome-banner">
-          <div>
-            <span class="eyebrow">PLATEFORME DE FORMATION • BTS SIO SISR</span>
-            <h1>Bienvenue dans ton <span>CyberLab.</span></h1>
-            <p>Apprends, expérimente et progresse à ton rythme.</p>
-          </div>
-          <div class="banner-symbol" aria-hidden="true">⌘</div>
-        </section>
-
-        <div id="pageContent" aria-live="polite"></div>
+      <div id="content" class="page-content" tabindex="-1">
+        <div id="pageContent">
+          <div class="loading">Chargement de CyberLab Academy…</div>
+        </div>
       </div>
+
       <footer class="footer">
-        <span>CyberLab Academy V4</span>
-        <span>Projet pédagogique personnel · Données locales</span>
+        <span>CyberLab Academy V5</span>
+        <span>Projet pédagogique personnel · Aucune supervision réelle</span>
       </footer>
     </main>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <script src="js/storage.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/lab.js"></script>
-  <script src="js/missions.js"></script>
-  <script src="js/supervision.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
