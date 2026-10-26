@@ -5,209 +5,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b1220">
-  <meta name="description" content="CyberLab Academy : plateforme d'apprentissage BTS SIO SISR.">
-  <title>CyberLab Academy V3</title>
+  <meta name="description" content="CyberLab Academy V4 : plateforme pédagogique BTS SIO SISR.">
+  <title>CyberLab Academy V4</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/storage.js" defer></script>
-  <script src="js/lab.js" defer></script>
-  <script src="js/missions.js" defer></script>
-  <script src="js/supervision.js" defer></script>
-  <script src="js/app.js" defer></script>
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar">
-      <a class="brand" href="#dashboard" aria-label="Accueil CyberLab Academy">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#dashboard" data-page="dashboard">
         <span class="brand-icon">C</span>
-        <span>CyberLab <small>ACADEMY V3</small></span>
+        <span><strong>CyberLab</strong><small>ACADEMY V4</small></span>
       </a>
 
-      <p class="nav-label">ESPACE DE TRAVAIL</p>
+      <div class="side-label">ESPACE DE TRAVAIL</div>
       <nav class="navigation" aria-label="Navigation principale">
-        <button class="nav-item active" data-page="dashboard">▦ Tableau de bord</button>
-        <button class="nav-item" data-page="courses">▤ Parcours SISR</button>
-        <button class="nav-item" data-page="lab">⌘ Laboratoire réseau</button>
-        <button class="nav-item" data-page="missions">◈ Missions pratiques</button>
-        <button class="nav-item" data-page="supervision">◉ Supervision</button>
-        <button class="nav-item" data-page="quiz">✓ Quiz & examens</button>
+        <button class="nav-link active" data-page="dashboard"><span>▦</span> Tableau de bord</button>
+        <button class="nav-link" data-page="courses"><span>▤</span> Centre de formation</button>
+        <button class="nav-link" data-page="lab"><span>⌘</span> Laboratoire réseau</button>
+        <button class="nav-link" data-page="missions"><span>⚑</span> Missions pratiques</button>
+        <button class="nav-link" data-page="quiz"><span>?</span> Quiz & examens</button>
+        <button class="nav-link" data-page="supervision"><span>◉</span> Supervision</button>
+        <button class="nav-link" data-page="glossary"><span>▧</span> Glossaire</button>
+        <button class="nav-link" data-page="journal"><span>☷</span> Journal de révision</button>
       </nav>
 
       <div class="sidebar-bottom">
-        <div class="profile-card">
-          <div class="avatar">CL</div>
-          <div><strong>Apprenant</strong><small>Technicien SISR</small></div>
+        <div class="mini-card">
+          <span class="eyebrow">TON PARCOURS</span>
+          <strong id="sidebarLevel">Niveau 1</strong>
+          <div class="progress-track"><span id="sidebarProgress"></span></div>
+          <small id="sidebarXp">0 XP accumulés</small>
         </div>
-        <button id="themeToggle" class="secondary-button full-width">☼ Changer de thème</button>
+        <button class="nav-link" data-page="settings"><span>⚙</span> Paramètres</button>
       </div>
     </aside>
 
     <main class="main-area">
       <header class="topbar">
-        <div>
-          <p class="eyebrow">FORMATION INFORMATIQUE</p>
-          <h1 id="pageTitle">Tableau de bord</h1>
-        </div>
-        <div class="topbar-actions">
-          <span class="status-pill"><span class="status-dot"></span> Mode local</span>
-          <button id="exportButton" class="secondary-button">Exporter</button>
+        <button class="icon-button mobile-menu" id="menuButton" aria-label="Ouvrir le menu">☰</button>
+        <div class="breadcrumb"><span>CyberLab Academy</span><span>/</span><strong id="pageTitle">Tableau de bord</strong></div>
+        <div class="top-actions">
+          <span class="status-pill"><span class="status-dot"></span> Mode pédagogique</span>
+          <button class="icon-button" id="themeButton" title="Changer de thème" aria-label="Changer de thème">☼</button>
         </div>
       </header>
 
-      <div id="notice" class="notice" role="status" hidden></div>
-
-      <section id="page-dashboard" class="page active">
-        <div class="hero">
-          <div class="hero-content">
-            <span class="tag">TON ESPACE DE FORMATION</span>
-            <h2>Bienvenue dans ton laboratoire.</h2>
-            <p>Apprends, expérimente et développe tes compétences en administration systèmes et réseaux.</p>
-            <button class="primary-button" data-go="lab">Ouvrir le laboratoire <span>→</span></button>
+      <div class="content" id="content" tabindex="-1">
+        <section class="welcome-banner">
+          <div>
+            <span class="eyebrow">PLATEFORME DE FORMATION • BTS SIO SISR</span>
+            <h1>Bienvenue dans ton <span>CyberLab.</span></h1>
+            <p>Apprends, expérimente et progresse à ton rythme.</p>
           </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="orbit orbit-one"></div>
-            <div class="orbit orbit-two"></div>
-            <div class="server-illustration">
-              <div>▰ ▰ ▰</div><div>▰ ▰ ▰</div><div>▰ ▰ ▰</div>
-            </div>
-            <span class="floating-chip chip-one">SYS</span>
-            <span class="floating-chip chip-two">NET</span>
-          </div>
-        </div>
+          <div class="banner-symbol" aria-hidden="true">⌘</div>
+        </section>
 
-        <div class="stats-grid">
-          <article class="stat-card"><span>XP gagnés</span><strong id="xpStat">0</strong><small>Points d'expérience</small></article>
-          <article class="stat-card"><span>Missions terminées</span><strong id="missionStat">0</strong><small>Sur 6 missions</small></article>
-          <article class="stat-card"><span>Quiz réussis</span><strong id="quizStat">0</strong><small>Résultats enregistrés</small></article>
-          <article class="stat-card"><span>Progression</span><strong id="progressStat">0%</strong><small>De ton parcours</small></article>
-        </div>
-
-        <div class="content-grid">
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">APPRENTISSAGE</p><h2>Ton parcours</h2></div><span class="panel-icon">▤</span></div>
-            <div id="courseProgress" class="course-progress"></div>
-          </article>
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">À FAIRE</p><h2>Prochaines étapes</h2></div></div>
-            <div class="task-list">
-              <button class="task-item" data-go="lab"><span class="task-symbol">⌘</span><span><strong>Explorer le réseau</strong><small>Comprendre les adresses IP</small></span><span>→</span></button>
-              <button class="task-item" data-go="missions"><span class="task-symbol">◈</span><span><strong>Résoudre une mission</strong><small>Mettre en pratique tes acquis</small></span><span>→</span></button>
-              <button class="task-item" data-go="supervision"><span class="task-symbol">◉</span><span><strong>Analyser les alertes</strong><small>Découvrir la supervision</small></span><span>→</span></button>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="page-courses" class="page">
-        <div class="section-intro">
-          <p class="eyebrow">COMPÉTENCES TECHNIQUES</p>
-          <h2>Parcours BTS SIO SISR</h2>
-          <p>Choisis un domaine et valide tes connaissances au fil de ta progression.</p>
-        </div>
-        <div id="coursesGrid" class="courses-grid"></div>
-      </section>
-
-      <section id="page-lab" class="page">
-        <div class="section-intro">
-          <p class="eyebrow">ENVIRONNEMENT VIRTUEL</p>
-          <h2>Laboratoire réseau</h2>
-          <p>Configure un petit réseau fictif et teste sa cohérence. Aucun paquet réseau réel n'est envoyé.</p>
-        </div>
-        <div class="content-grid">
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">TOPOLOGIE</p><h2>Réseau d'entreprise</h2></div><span class="status-pill">Simulation</span></div>
-            <div class="network-map">
-              <div class="network-node"><span>☁</span><strong>Internet</strong><small>Externe</small></div>
-              <div class="network-link"></div>
-              <div class="network-node router-node"><span>⇄</span><strong>Routeur</strong><small>192.168.10.1</small></div>
-              <div class="network-branches">
-                <div class="branch"><div class="network-link vertical"></div><div class="network-node"><span>▤</span><strong>Serveur</strong><small>Windows Server</small></div></div>
-                <div class="branch"><div class="network-link vertical"></div><div class="network-node"><span>▣</span><strong>Client</strong><small>Windows 11</small></div></div>
-                <div class="branch"><div class="network-link vertical"></div><div class="network-node"><span>⌘</span><strong>Linux</strong><small>Debian</small></div></div>
-              </div>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-heading"><div><p class="eyebrow">CONFIGURATION</p><h2>Adresse IPv4</h2></div></div>
-            <form id="networkForm" class="form-stack">
-              <label>Adresse IP<input id="ipAddress" value="192.168.10.20" required></label>
-              <label>Masque réseau<input id="subnetMask" value="255.255.255.0" required></label>
-              <label>Passerelle<input id="gateway" value="192.168.10.1" required></label>
-              <label>Serveur DNS<input id="dnsAddress" value="192.168.10.10" required></label>
-              <button class="primary-button" type="submit">Tester la configuration</button>
-            </form>
-            <div id="networkResult" class="result-box" aria-live="polite">Configure ton réseau puis lance le test.</div>
-          </article>
-        </div>
-        <article class="panel terminal-panel">
-          <div class="panel-heading"><div><p class="eyebrow">CONSOLE DE SIMULATION</p><h2>Diagnostic réseau</h2></div><span class="terminal-label">SIMULÉ</span></div>
-          <div class="terminal-output" id="terminalOutput" aria-live="polite">
-            <p><span class="terminal-prompt">$</span> CyberLab Network Simulator v3.0</p>
-            <p>Prêt. Lance un test de configuration ci-dessus.</p>
-          </div>
-          <div class="terminal-actions">
-            <button class="secondary-button" data-command="ipconfig">Simuler ipconfig</button>
-            <button class="secondary-button" data-command="ping">Simuler ping passerelle</button>
-            <button class="secondary-button" data-command="clear">Effacer la console</button>
-          </div>
-        </article>
-      </section>
-
-      <section id="page-missions" class="page">
-        <div class="section-intro">
-          <p class="eyebrow">MISE EN SITUATION</p>
-          <h2>Missions pratiques</h2>
-          <p>Résous des incidents fictifs, consulte les corrections et gagne de l'expérience.</p>
-        </div>
-        <div id="missionsGrid" class="missions-grid"></div>
-      </section>
-
-      <section id="page-supervision" class="page">
-        <div class="section-intro">
-          <p class="eyebrow">CENTRE DE SUPERVISION</p>
-          <h2>État du système</h2>
-          <p>Les équipements et événements ci-dessous sont fictifs et servent à l'entraînement.</p>
-        </div>
-        <div class="stats-grid">
-          <article class="stat-card"><span>Équipements disponibles</span><strong id="onlineCount">3</strong><small>Sur 4 équipements simulés</small></article>
-          <article class="stat-card"><span>Alertes ouvertes</span><strong id="alertCount">2</strong><small>Événements de démonstration</small></article>
-          <article class="stat-card"><span>Disponibilité simulée</span><strong>99,5%</strong><small>Valeur illustrative</small></article>
-          <article class="stat-card"><span>État global</span><strong class="healthy-text">Stable</strong><small>Selon la simulation</small></article>
-        </div>
-        <article class="panel">
-          <div class="panel-heading"><div><p class="eyebrow">INFRASTRUCTURE</p><h2>Équipements</h2></div><button id="refreshMonitoring" class="secondary-button">Actualiser la démo</button></div>
-          <div id="devicesList" class="devices-list"></div>
-        </article>
-        <article class="panel">
-          <div class="panel-heading"><div><p class="eyebrow">ÉVÉNEMENTS</p><h2>Journal d'activité</h2></div><button id="clearLogs" class="secondary-button">Vider l'affichage</button></div>
-          <div id="logsList" class="logs-list"></div>
-        </article>
-      </section>
-
-      <section id="page-quiz" class="page">
-        <div class="section-intro">
-          <p class="eyebrow">ÉVALUATION DES CONNAISSANCES</p>
-          <h2>Quiz & examens</h2>
-          <p>Réponds aux questions et consulte ton score à la fin du questionnaire.</p>
-        </div>
-        <article class="panel quiz-panel">
-          <div class="panel-heading"><div><p class="eyebrow">QUIZ SISR</p><h2>Connaissances générales</h2></div><span id="quizCounter" class="status-pill">Prêt</span></div>
-          <div id="quizArea">
-            <p>Ce quiz comporte 5 questions sur les réseaux, Windows, Linux et la sécurité.</p>
-            <button id="startQuiz" class="primary-button">Commencer le quiz</button>
-          </div>
-          <div id="quizFeedback" class="result-box" hidden></div>
-        </article>
-        <article class="panel">
-          <div class="panel-heading"><div><p class="eyebrow">HISTORIQUE</p><h2>Derniers résultats</h2></div></div>
-          <div id="quizHistory" class="history-list"></div>
-        </article>
-      </section>
-
+        <div id="pageContent" aria-live="polite"></div>
+      </div>
       <footer class="footer">
-        <span>CyberLab Academy V3</span>
-        <span>Apprendre • Tester • Progresser</span>
+        <span>CyberLab Academy V4</span>
+        <span>Projet pédagogique personnel · Données locales</span>
       </footer>
     </main>
   </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/lab.js"></script>
+  <script src="js/missions.js"></script>
+  <script src="js/supervision.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
